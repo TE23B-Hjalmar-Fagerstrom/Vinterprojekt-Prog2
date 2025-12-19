@@ -5,6 +5,11 @@ public class BackPack
     public List<Item> Items
     {
         get => items;
+
+        set
+        {
+            items.AddRange(value);
+        }
     }
 
     public void Display()

@@ -4,32 +4,34 @@ public class Item : Rarity
     private double buyCost = 20;
     private double sellCost = 10;
 
+    public Item()
+    {
+        name = $"{theRarity} ";
+
+        buyCost += (buyCost + RarityMultiplier) * RarityMultiplier;
+        buyCost = Math.Round(buyCost);
+
+        sellCost += (sellCost + RarityMultiplier) * RarityMultiplier;
+        sellCost = Math.Round(sellCost);
+    }
+
     public string Name
     {
         get => name;
 
-        set { name = $"{theRarity} " + value; }
+        set
+        {
+            name += value;
+        }
     }
 
     public double BuyCost
     {
         get => buyCost;
-
-        set
-        {
-            buyCost += (value + RarityMultiplier) * RarityMultiplier;
-            buyCost = Math.Round(buyCost);
-        }
     }
 
     public double SellCost
     {
         get => sellCost;
-
-        set
-        {
-            sellCost += (value + RarityMultiplier) * RarityMultiplier;
-            sellCost = Math.Round(sellCost);
-        }
     }
 }

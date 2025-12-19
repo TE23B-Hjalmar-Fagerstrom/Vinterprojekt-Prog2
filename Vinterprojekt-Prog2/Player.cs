@@ -1,13 +1,22 @@
 public class Player
 {
     private float maxHP = 100;
-    private float hp;
+    private double hp;
     private float maxMP = 30;
-    private float mp;
+    private double mp;
     private BackPack inventory = new();
+    private double damage;
     private float xp;
     private int level;
     private int gold;
+
+    public Player()
+    {
+        hp = maxHP;
+        mp = maxMP;
+        level = 1;
+        gold = 5;
+    }
 
     public float MaxHP
     {
@@ -22,12 +31,19 @@ public class Player
     public BackPack Inventory
     {
         get => inventory;
-
-        set { inventory.Items.Add(value); }
     }
 
+    public double Damage
+    {
+        get => damage;
 
-    public float Hp
+        set
+        {
+            damage = value;
+        }
+    }
+
+    public double Hp
     {
         get => hp;
 
@@ -39,7 +55,7 @@ public class Player
         }
     }
 
-    public float Mp
+    public double Mp
     {
         get => mp;
 
@@ -49,6 +65,7 @@ public class Player
             {
                 mp += value;
             }
+            
             if (mp > maxMP) mp = maxMP;
         }
     }
@@ -56,15 +73,6 @@ public class Player
     public int Level
     {
         get => level;
-
-        set
-        {
-            if (xp >= 15 * level * 1.25f)
-            {
-                xp -= 15 * level * 1.25f;
-                level++;
-            }
-        }
     }
 
     public float Xp
@@ -74,6 +82,12 @@ public class Player
         set
         {
             xp += value;
+
+            if (xp >= 15 * level * 1.25f)
+            {
+                xp -= 15 * level * 1.25f;
+                level++;
+            }
         }
     }
 
