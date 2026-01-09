@@ -1,11 +1,22 @@
 public class HolyLight : Upgrade
 {
-    private int stunDuration;
+    private double stunDuration;
 
     public HolyLight()
     {
-        MageDamage = (30 + RarityMultiplier) * RarityMultiplier;
+        if (RarityMultiplier == 1)
+        {
+            MageDamage = 30;
+            stunDuration = 1;
+        }
+        else
+        {
+            MageDamage = (30 + RarityMultiplier) * RarityMultiplier;
+            stunDuration = 1 + RarityMultiplier;
+        }
+
         MageDamage = Math.Round(MageDamage);
+        stunDuration = Math.Round(stunDuration);
 
         ManaCost = 15;
     }

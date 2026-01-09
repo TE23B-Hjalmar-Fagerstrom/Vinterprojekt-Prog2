@@ -87,6 +87,8 @@ public class Player
             {
                 xp -= 15 * level * 1.25f;
                 level++;
+                maxHP++;
+                maxMP++;
             }
         }
     }
