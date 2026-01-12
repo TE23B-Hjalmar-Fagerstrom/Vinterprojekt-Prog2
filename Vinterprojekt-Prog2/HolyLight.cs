@@ -21,10 +21,19 @@ public class HolyLight : Upgrade
         ManaCost = 15;
     }
 
-    
-    public void UseAbilitie(Enemy target)
+
+    public void UseAbilitie(Enemy target, Player player)
     {
-        target.Hp -= MageDamage;
-        target.HowLongStund += stunDuration;
+        if (player.Mp >= 10)
+        {
+            target.Hp -= MageDamage;
+            target.HowLongStund += stunDuration;
+
+            player.Mp -= ManaCost;
+        }
+        else
+        {
+            Console.WriteLine("Du har inte tillräckligt med mana");
+        }
     }
 }

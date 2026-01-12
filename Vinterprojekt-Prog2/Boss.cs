@@ -1,7 +1,12 @@
 public class Boss : Enemy
 {
-    private float hpAndDamageMultiplier;
-    private int goldMultiplier;
+    private double difficultyMultiplier = 1.75;
+    private double goldMultiplier = 2;
+
+    public Boss(Player player) : base(player)
+    {
+        
+    }
 
     public void SpecialMove(Player target)
     {

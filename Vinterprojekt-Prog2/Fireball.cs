@@ -32,9 +32,18 @@ public class Fireball : Upgrade
         ManaCost = 10;
     }
 
-    public void UseAbilitie(Enemy target)
+    public void UseAbilitie(Enemy target, Player player)
     {
-        target.Hp -= MageDamage;
-        target.HowLongBurn += burnDuration;
+        if (player.Mp >= 10)
+        {
+            target.Hp -= MageDamage;
+            target.HowLongBurn += burnDuration;
+
+            player.Mp -= ManaCost;
+        }
+        else
+        {
+            Console.WriteLine("Du har inte tillräckligt med mana");
+        }
     }
 }

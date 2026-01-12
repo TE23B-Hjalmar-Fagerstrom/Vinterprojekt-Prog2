@@ -3,11 +3,12 @@ public class Enemy
     private double maxHP = 100;
     private double hp;
     private double damage = 10;
-    private double armor = 1;
-    private int goldDrop = 5;
+    private double armor;
+    private double goldDrop = 5;
     private double xpDrop = 4;
     private double howLongStund;
     private double howLongBurn;
+    private double armorUpDuration;
 
     public Enemy(Player player)
     {
@@ -48,14 +49,35 @@ public class Enemy
         get => damage;
     }
 
-    public int GoldDrop
+
+    public double GoldDrop
     {
         get => goldDrop;
+
+        protected set
+        {
+            goldDrop += value;
+        }
     }
 
     public double XpDrop
     {
         get => xpDrop;
+
+        protected set
+        {
+            xpDrop += value;
+        }
+    }
+
+    public double Armor
+    {
+        get => armor;
+
+        set
+        {
+            armor += value;
+        }
     }
 
     public double HowLongStund
@@ -88,13 +110,43 @@ public class Enemy
         }
     }
 
-    public void Attack()
+    public double ArmorUpDuration
     {
+        get => armorUpDuration;
 
+        set
+        {
+            armorUpDuration += value;
+
+            if (armorUpDuration <= 0)
+            {
+                armorUpDuration = 0;
+            }
+        }
     }
 
-    public void Defend()
+    public void Attack(Player player)
     {
 
+        ArmordUpCheck(player);
+    }
+
+    public void Defend(Player player)
+    {
+
+        ArmordUpCheck(player);
+    }
+
+    private void ArmordUpCheck(Player player)
+    {
+        if (armorUpDuration > 0)
+        {
+            armorUpDuration--;
+        }
+        else if (armorUpDuration <= 0)
+        {
+            armor = armor * (player.Level * 0.5f);
+            armor = Math.Round(armor);
+        }
     }
 }

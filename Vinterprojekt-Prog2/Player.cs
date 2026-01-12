@@ -9,6 +9,7 @@ public class Player
     private float xp;
     private int level;
     private int gold;
+    private double lifeStealDuration;
 
     public Player()
     {
@@ -40,6 +41,16 @@ public class Player
         set
         {
             damage = value;
+        }
+    }
+
+    public double LifeStealDuration
+    {
+        get => lifeStealDuration;
+
+        set
+        {
+            lifeStealDuration = value;
         }
     }
 
