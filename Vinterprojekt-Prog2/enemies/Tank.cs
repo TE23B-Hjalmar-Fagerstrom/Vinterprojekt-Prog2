@@ -1,6 +1,6 @@
 public class Tank : Enemy
 {
-    private double armorMultiplier = 1.75;
+    private double armorMultiplier = 1.75f;
     private double difficultyMultiplier = 1.25;
 
     public Tank(Player player) : base(player)
@@ -9,16 +9,16 @@ public class Tank : Enemy
         XpDrop = XpDrop * difficultyMultiplier;
         GoldDrop = GoldDrop * difficultyMultiplier;
 
-        Math.Round(Armor);
-        Math.Round(XpDrop);
-        Math.Round(GoldDrop);
+        Armor = Math.Round(Armor);
+        XpDrop = Math.Round(XpDrop);
+        GoldDrop = Math.Round(GoldDrop);
     }
 
     public void ArmorUp(Enemy target)
     {
         target.ArmorUpDuration = 2;
-        target.Armor = Armor * armorMultiplier;
-        
-        Math.Round(target.Armor);
+        target.Armor = target.Armor * armorMultiplier;
+
+        Console.WriteLine($"Enemy Tank used armor up on {target}");
     }
 }

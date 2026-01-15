@@ -1,25 +1,14 @@
-﻿Weapon weapon = new();
-Player player = new();
-Item item = new();
-Rarity rarity = new();
-HealtPotion healtPotion = new();
+﻿Player player = new();
+Enemy enemy = new(player);
+Tank tank = new(player);
 
-Console.WriteLine(healtPotion.Name);
-Console.WriteLine(healtPotion.UsesDuration);
+Console.WriteLine($"{enemy.Armor}");
 
-Console.ReadLine();
+tank.ArmorUp(enemy);
 
-player.Damage = Random.Shared.Next((int)weapon.MinDamage, (int)weapon.MaxDamage + 1);
-
-Console.WriteLine(player.Damage);
-
-Console.ReadLine();
-
-
-Console.WriteLine(rarity.RarityLevel);
-
-Console.WriteLine(item.Name);
-Console.WriteLine(item.BuyCost);
-Console.WriteLine(item.SellCost);
+Console.WriteLine("");
+Console.WriteLine("");
+Console.WriteLine($"{enemy.Armor}");
+Console.WriteLine($"{enemy.ArmorUpDuration}");
 
 Console.ReadLine();

@@ -3,7 +3,7 @@ public class Enemy
     private double maxHP = 100;
     private double hp;
     private double damage = 10;
-    private double armor;
+    private double armor = 1;
     private double goldDrop = 5;
     private double xpDrop = 4;
     private double howLongStund;
@@ -20,7 +20,7 @@ public class Enemy
         damage = damage * (player.Level * 0.5f);
         damage = Math.Round(damage);
 
-        armor = armor * (player.Level * 0.5f);
+        armor = armor * player.Level;
         armor = Math.Round(armor);
 
         xpDrop = xpDrop * (player.Level * 0.5f);
@@ -37,10 +37,8 @@ public class Enemy
         {
             hp += value;
 
-            if (hp < 0)
-            {
-                hp = 0;
-            }
+            if (hp < 0) hp = 0;
+            if (hp > maxHP) hp = maxHP;
         }
     }
 
@@ -56,7 +54,7 @@ public class Enemy
 
         protected set
         {
-            goldDrop += value;
+            goldDrop = value;
         }
     }
 
@@ -66,7 +64,7 @@ public class Enemy
 
         protected set
         {
-            xpDrop += value;
+            xpDrop = value;
         }
     }
 
@@ -76,7 +74,8 @@ public class Enemy
 
         set
         {
-            armor += value;
+            armor = value;
+            armor = Math.Round(armor);
         }
     }
 

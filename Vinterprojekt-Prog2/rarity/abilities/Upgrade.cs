@@ -11,4 +11,10 @@ public class Upgrade : Abilitie
     {
         get => upgradeMultiplier;
     }
+
+    public void UpgradeAbility(Abilitie target)
+    {
+        // target.MageDamage = 9;
+        target.Upgrade(upgradeMultiplier);
+    }
 }

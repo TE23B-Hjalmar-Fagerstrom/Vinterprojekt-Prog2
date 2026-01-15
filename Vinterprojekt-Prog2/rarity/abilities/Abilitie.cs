@@ -7,7 +7,7 @@ public class Abilitie : Rarity
     {
         get => mageDamage;
 
-        set
+        protected set
         {
             mageDamage = value;
         }
@@ -17,9 +17,14 @@ public class Abilitie : Rarity
     {
         get => manaCost;
 
-        set
+        protected set
         {
             manaCost = value;
         }
+    }
+
+    public void Upgrade(float multiplier)
+    {
+        MageDamage = MageDamage * multiplier;
     }
 }

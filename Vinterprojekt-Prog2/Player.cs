@@ -17,6 +17,7 @@ public class Player
         mp = maxMP;
         level = 1;
         gold = 5;
+        damage = 10;
     }
 
     public float MaxHP
@@ -61,6 +62,7 @@ public class Player
         set
         {
             hp += value;
+            
             if (hp < 0) hp = 0;
             if (hp > maxHP) hp = maxHP;
         }
@@ -114,6 +116,14 @@ public class Player
             {
                 gold += value;
             }
+        }
+    }
+
+    public void LifeStealActiv(LifeSteal life)
+    {
+        if (lifeStealDuration > 0)
+        {
+            hp += damage * life.HelaAmount;
         }
     }
 
