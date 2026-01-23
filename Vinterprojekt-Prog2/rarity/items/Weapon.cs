@@ -6,7 +6,7 @@ public class Weapon : Item
 
     public Weapon()
     {
-        damageMultiplier = RarityMultiplier;  
+        damageMultiplier = RarityMultiplier;
 
         minDamage = (minDamage + RarityMultiplier + damageMultiplier) * damageMultiplier;
         minDamage = Math.Round(minDamage);
@@ -19,7 +19,7 @@ public class Weapon : Item
     {
         get => minDamage;
     }
-    
+
     public double MaxDamage
     {
         get => maxDamage;
@@ -28,10 +28,5 @@ public class Weapon : Item
     public float DamageMultiplier
     {
         get => damageMultiplier;
-
-        set
-        {
-            
-        }
     }
 }

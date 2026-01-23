@@ -4,7 +4,7 @@ public class Upgrade : Abilitie
 
     public Upgrade()
     {
-        upgradeMultiplier = (RarityMultiplier * RarityMultiplier) * 0.75f;
+        upgradeMultiplier = RarityMultiplier * RarityMultiplier * 0.75f;
     }
 
     public float UpgradeMultiplier

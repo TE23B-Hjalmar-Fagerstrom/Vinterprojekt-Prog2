@@ -10,14 +10,20 @@ public class Player
     private int level;
     private int gold;
     private double lifeStealDuration;
+    private double potionDuration;
 
-    public Player()
+    public Player(Weapon weapon)
     {
         hp = maxHP;
         mp = maxMP;
         level = 1;
         gold = 5;
         damage = 10;
+
+        inFight["attack"]();
+        {
+            damage = Random.Shared.Next((int)weapon.MinDamage, (int)weapon.MaxDamage);
+        }
     }
 
     public float MaxHP
@@ -55,6 +61,16 @@ public class Player
         }
     }
 
+    public double PotionDuration
+    {
+        get => potionDuration;
+
+        set
+        {
+            potionDuration = value;
+        }
+    }
+
     public double Hp
     {
         get => hp;
@@ -62,7 +78,7 @@ public class Player
         set
         {
             hp += value;
-            
+
             if (hp < 0) hp = 0;
             if (hp > maxHP) hp = maxHP;
         }
@@ -78,7 +94,7 @@ public class Player
             {
                 mp += value;
             }
-            
+
             if (mp > maxMP) mp = maxMP;
         }
     }

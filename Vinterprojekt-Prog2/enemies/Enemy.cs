@@ -12,21 +12,22 @@ public class Enemy
 
     public Enemy(Player player)
     {
-        maxHP = maxHP * (player.Level * 0.5f);
+        maxHP = maxHP + (player.Level * 0.5f);
         maxHP = Math.Round(maxHP);
 
         hp = maxHP;
 
-        damage = damage * (player.Level * 0.5f);
+        damage = damage + (player.Level * 0.5f);
         damage = Math.Round(damage);
 
         armor = armor * player.Level;
         armor = Math.Round(armor);
 
-        xpDrop = xpDrop * (player.Level * 0.5f);
+        xpDrop = xpDrop + (player.Level * 0.5f);
         xpDrop = Math.Round(xpDrop);
 
-        goldDrop = goldDrop + player.Level;
+        goldDrop = goldDrop + (player.Level * 0.5f);
+        goldDrop = Math.Round(goldDrop);
     }
 
     public double Hp
@@ -38,13 +39,17 @@ public class Enemy
             hp += value;
 
             if (hp < 0) hp = 0;
-            if (hp > maxHP) hp = maxHP;
         }
     }
 
     public double Damage
     {
         get => damage;
+
+        protected set
+        {
+            damage = value;
+        }
     }
 
 
@@ -85,7 +90,7 @@ public class Enemy
 
         set
         {
-            howLongStund += value;
+            howLongStund = value;
 
             if (howLongStund <= 0)
             {
@@ -100,7 +105,7 @@ public class Enemy
 
         set
         {
-            howLongBurn += value;
+            howLongBurn = value;
 
             if (howLongBurn <= 0)
             {
@@ -115,7 +120,7 @@ public class Enemy
 
         set
         {
-            armorUpDuration += value;
+            armorUpDuration = value;
 
             if (armorUpDuration <= 0)
             {

@@ -13,7 +13,11 @@ public class StrengthPotion : Consumable
 
     public override void Use(Player target)
     {
-        target.Damage *= damageMultiplierFromPotion;
-        UsesCurent -= 1;
+        if (UsesCurent > 0)
+        {
+            target.Damage *= damageMultiplierFromPotion;
+            target.PotionDuration += UsesDuration;
+            UsesCurent -= 1;
+        }
     }
 }

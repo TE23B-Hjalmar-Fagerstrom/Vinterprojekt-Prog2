@@ -8,10 +8,10 @@ public class Item : Rarity
     {
         name = $"{theRarity} ";
 
-        buyCost += (buyCost + RarityMultiplier) * RarityMultiplier;
+        buyCost = (buyCost + RarityMultiplier) * RarityMultiplier;
         buyCost = Math.Round(buyCost);
 
-        sellCost += (sellCost + RarityMultiplier) * RarityMultiplier;
+        sellCost = (sellCost + RarityMultiplier) * RarityMultiplier;
         sellCost = Math.Round(sellCost);
     }
 

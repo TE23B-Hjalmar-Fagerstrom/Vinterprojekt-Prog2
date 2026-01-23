@@ -1,0 +1,7 @@
+TIPS:
+
+ha en klass för buffs/debuffs och använda en lista i -
+karaktärerna för att hålla koll på dem 
+
+Idéer:
+

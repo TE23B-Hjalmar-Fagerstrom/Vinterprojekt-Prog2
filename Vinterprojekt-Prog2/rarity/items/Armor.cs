@@ -7,10 +7,10 @@ public class Armor : Item
     public Armor()
     {
         armor = (armor + armorMultiplier + RarityMultiplier) * armorMultiplier;
-        Math.Round(armor);
+        armor = Math.Round(armor);
 
         mageArmor = (mageArmor + armorMultiplier + RarityMultiplier) * armorMultiplier;
-        Math.Round(mageArmor);
+        mageArmor = Math.Round(mageArmor);
 
         armorMultiplier = RarityMultiplier;
     }

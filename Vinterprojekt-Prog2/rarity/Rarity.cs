@@ -19,7 +19,7 @@ public class Rarity
         get => rarityMultiplier;
     }
 
-    public Rarity()
+    protected Rarity() // konstruktor 
     {
         rarityLevel = Random.Shared.Next(1, 101);
 
