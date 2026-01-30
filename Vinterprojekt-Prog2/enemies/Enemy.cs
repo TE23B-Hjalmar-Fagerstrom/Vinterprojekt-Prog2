@@ -9,6 +9,7 @@ public class Enemy
     private double howLongStund;
     private double howLongBurn;
     private double armorUpDuration;
+    private bool defending = false;
 
     public Enemy(Player player)
     {
@@ -29,6 +30,17 @@ public class Enemy
         goldDrop = goldDrop + (player.Level * 0.5f);
         goldDrop = Math.Round(goldDrop);
     }
+
+    public bool Defending
+    {
+        get => defending;
+
+        set
+        {
+            defending = value;
+        }
+    }
+
 
     public double Hp
     {
@@ -131,12 +143,16 @@ public class Enemy
 
     public void Attack(Player player)
     {
+        defending = false;
 
         ArmordUpCheck(player);
     }
 
     public void Defend(Player player)
     {
+        defending = true;
+
+        armor *= 1.5;
 
         ArmordUpCheck(player);
     }

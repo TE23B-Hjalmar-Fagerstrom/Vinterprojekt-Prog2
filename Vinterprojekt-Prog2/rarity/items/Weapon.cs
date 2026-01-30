@@ -12,7 +12,7 @@ public class Weapon : Item
         minDamage = Math.Round(minDamage);
 
         maxDamage = (maxDamage + RarityMultiplier + damageMultiplier) * damageMultiplier;
-        maxDamage = Math.Round(minDamage);
+        maxDamage = Math.Round(maxDamage);
     }
 
     public double MinDamage

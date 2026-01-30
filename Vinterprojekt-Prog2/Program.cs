@@ -1,14 +1,12 @@
 ﻿Player player = new();
+Weapon weapon = new();
+StrengthPotion strengthPotion = new();
 Enemy enemy = new(player);
 Tank tank = new(player);
 
-Console.WriteLine($"{enemy.Armor}");
+Console.WriteLine($"{weapon.MinDamage}");
 
-tank.ArmorUp(enemy);
-
-Console.WriteLine("");
-Console.WriteLine("");
-Console.WriteLine($"{enemy.Armor}");
-Console.WriteLine($"{enemy.ArmorUpDuration}");
+enemy.Defending = true;
+player.ActionsForFight(weapon, strengthPotion, enemy);
 
 Console.ReadLine();

@@ -1,3 +1,5 @@
+using System.Security.Cryptography.X509Certificates;
+
 public class Player
 {
     private float maxHP = 100;
@@ -11,8 +13,11 @@ public class Player
     private int gold;
     private double lifeStealDuration;
     private double potionDuration;
+    private Weapon weapon;
+    private StrengthPotion strengthPotion;
+    private Enemy target;
 
-    public Player(Weapon weapon)
+    public Player()
     {
         hp = maxHP;
         mp = maxMP;
@@ -20,10 +25,28 @@ public class Player
         gold = 5;
         damage = 10;
 
-        inFight["attack"]();
+        inFight["attack"] = () =>
         {
             damage = Random.Shared.Next((int)weapon.MinDamage, (int)weapon.MaxDamage);
-        }
+
+            if (potionDuration > 0)
+            {
+                damage *= strengthPotion.DamageMultiplierFromPotion;
+            }
+
+            damage = Math.Round(damage);
+
+            if (target.Defending == false)
+            {
+                target.Hp -= damage - target.Armor;
+            }
+            else
+            {
+                Console.WriteLine($"{target.Armor}");
+                target.Hp -= damage - Math.Round(target.Armor * 1.5);
+                Console.WriteLine($"{target.Armor}");
+            }
+        };
     }
 
     public float MaxHP
@@ -143,6 +166,19 @@ public class Player
         }
     }
 
+    public void ActionsForFight(Weapon weapon, StrengthPotion strengthPotion, Enemy target)
+    {
+        inFight["attack"]();
+
+        inFight["defend"]();
+        {
+
+        }
+    }
+
     public Dictionary<string, Action> inFight = new();
     public Dictionary<string, Action> inWorld = new();
+
+
+
 }

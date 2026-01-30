@@ -5,3 +5,4 @@ karaktärerna för att hålla koll på dem
 
 Idéer:
 
+gör en queue för equiped vapen och ta bort den första i kön när man equipar ett nyt vapen

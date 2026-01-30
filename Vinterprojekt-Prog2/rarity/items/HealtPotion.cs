@@ -6,15 +6,16 @@ public class HealtPotion : Consumable
     {
         healAmount = (25 + RarityMultiplier) * RarityMultiplier;
         healAmount = Math.Round(healAmount);
-        UsesCurent = UsesMax;
-        UsesDuration = 1;
 
-        Name ="health Potion";
+        Name = "health Potion";
     }
 
     public override void Use(Player target)
     {
-        target.Hp += healAmount;
-        UsesCurent -= 1;
+        if (UsesCurent > 0)
+        {
+            target.Hp += healAmount;
+            UsesCurent--;
+        }
     }
 }

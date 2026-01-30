@@ -7,13 +7,15 @@ public class ManaPotion : Consumable
         manaAmount = (5 + RarityMultiplier) * RarityMultiplier;
         manaAmount = Math.Round(manaAmount);
 
-        UsesCurent = UsesMax;
-        UsesDuration = 1;
+        Name = "Mana Potion";
     }
 
     public override void Use(Player target)
     {
-        target.Mp += manaAmount;
-        UsesCurent -= 1;
+        if (UsesCurent > 0)
+        {
+            target.Mp += manaAmount;
+            UsesCurent--;
+        }
     }
 }
