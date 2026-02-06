@@ -1,14 +1,21 @@
 public class Enemy
 {
-    private double maxHP = 100;
+    private double maxHP = 50;
     private double hp;
     private double damage = 10;
     private double armor = 1;
+    private double startArmor;
     private double goldDrop = 5;
     private double xpDrop = 4;
     private double howLongStund;
     private double howLongBurn;
     private double armorUpDuration;
+    protected double difficultyMultiplier;
+    protected double armorMultiplier;
+    protected int randomMin;
+    protected int randomMax;
+    protected int randomNum;
+    private int chargeUp = 2;
     private bool defending = false;
 
     public Enemy(Player player)
@@ -21,26 +28,35 @@ public class Enemy
         damage = damage + (player.Level * 0.5f);
         damage = Math.Round(damage);
 
-        armor = armor * player.Level;
+        armor = armor + player.Level;
         armor = Math.Round(armor);
+
+        startArmor = armor;
 
         xpDrop = xpDrop + (player.Level * 0.5f);
         xpDrop = Math.Round(xpDrop);
 
         goldDrop = goldDrop + (player.Level * 0.5f);
         goldDrop = Math.Round(goldDrop);
+
+        randomMin = 0;
+        randomMax = 100;
     }
 
     public bool Defending
     {
         get => defending;
-
-        set
-        {
-            defending = value;
-        }
     }
 
+    public double MaxHp
+    {
+        get => maxHP;
+
+        protected set
+        {
+            maxHP = value;
+        }
+    }
 
     public double Hp
     {
@@ -48,9 +64,7 @@ public class Enemy
 
         set
         {
-            hp += value;
-
-            if (hp < 0) hp = 0;
+            hp = Math.Clamp(value, 0, maxHP);
         }
     }
 
@@ -63,7 +77,6 @@ public class Enemy
             damage = value;
         }
     }
-
 
     public double GoldDrop
     {
@@ -145,19 +158,42 @@ public class Enemy
     {
         defending = false;
 
-        ArmordUpCheck(player);
+        ArmordUpCheck();
     }
 
-    public void Defend(Player player)
+    public void Defend()
     {
         defending = true;
 
-        armor *= 1.5;
-
-        ArmordUpCheck(player);
+        ArmordUpCheck();
     }
 
-    private void ArmordUpCheck(Player player)
+    public void ArmorUp(Enemy target)
+    {
+        target.ArmorUpDuration = 2;
+        target.Armor = target.Armor * armorMultiplier;
+
+        Console.WriteLine($"Enemy Tank used armor up on {target}");
+    }
+
+    public void SpecialMove(Player player)
+    {
+        chargeUp--;
+        randomMin = randomMax;
+
+        if (chargeUp <= 0)
+        {
+            Damage *= 2;
+            player.Hp -= Damage;
+            
+            Damage /= 2;
+            chargeUp = 2;
+
+            randomMin = 0;
+        }
+    }
+
+    private void ArmordUpCheck()
     {
         if (armorUpDuration > 0)
         {
@@ -165,8 +201,32 @@ public class Enemy
         }
         else if (armorUpDuration <= 0)
         {
-            armor = armor * (player.Level * 0.5f);
-            armor = Math.Round(armor);
+            armor = startArmor;
+        }
+    }
+
+    public void BattleLogic(Player player, Enemy target)
+    {
+        randomNum = Random.Shared.Next(randomMin, randomMax + 1);
+
+        if (randomNum <= 50)
+        {
+            Defend();
+        }
+
+        else if (randomNum > 50 && randomNum <= 100)
+        {
+            Attack(player);
+        }
+
+        else if (randomNum > 100 && randomNum <= 125)
+        {
+            ArmorUp(target);
+        }
+
+        else
+        {
+            SpecialMove(player);
         }
     }
 }

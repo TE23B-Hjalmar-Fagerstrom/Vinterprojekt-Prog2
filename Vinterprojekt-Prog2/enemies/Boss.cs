@@ -1,28 +1,24 @@
 public class Boss : Enemy
 {
-    private double difficultyMultiplier = 1.75;
-    private double goldMultiplier = 2;
-    private int chargeUp = 2;
-
     public Boss(Player player) : base(player)
     {
-        Hp *= difficultyMultiplier;
+        randomMax = 150;
+        difficultyMultiplier = 1.75;
+        MaxHp *= difficultyMultiplier;
+        Hp = MaxHp;
         Armor *= difficultyMultiplier;
         XpDrop *= difficultyMultiplier;
-        GoldDrop *= goldMultiplier;
+        GoldDrop *= 2;
+
+        while (randomNum > 100 && randomNum <= 125)
+        {
+            randomNum = Random.Shared.Next(randomMin, randomMax + 1);
+        }
+
     }
 
-    public void SpecialMove(Player target)
+    public override void BattleLogic()
     {
-        chargeUp--;
-
-        if (chargeUp <= 0)
-        {
-            Damage *= 2;
-            target.Hp -= Damage;
-            
-            Damage /= 2;
-            chargeUp = 2;
-        }
+        
     }
 }

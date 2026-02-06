@@ -4,9 +4,15 @@ StrengthPotion strengthPotion = new();
 Enemy enemy = new(player);
 Tank tank = new(player);
 
-Console.WriteLine($"{weapon.MinDamage}");
+Console.WriteLine($"{weapon.Name}");
 
-enemy.Defending = true;
-player.ActionsForFight(weapon, strengthPotion, enemy);
+player.printFightActions();
+
+player.PickAction(player);
+
+Console.WriteLine($"{enemy.Hp} HP Before");
+player.ActionsForFight(weapon, strengthPotion, enemy, player.PlayerAction);
+Console.WriteLine($"{enemy.Hp} HP After");
 
 Console.ReadLine();
+

@@ -1,32 +1,32 @@
-using System.Security.Cryptography.X509Certificates;
-
 public class Player
 {
     private float maxHP = 100;
     private double hp;
     private float maxMP = 30;
     private double mp;
-    private BackPack inventory = new();
     private double damage;
     private float xp;
-    private int level;
-    private int gold;
+    private int level = 1;
+    private int gold = 5;
     private double lifeStealDuration;
     private double potionDuration;
+    private BackPack inventory = new();
     private Weapon weapon;
     private StrengthPotion strengthPotion;
     private Enemy target;
+    private string actions;
+    private bool playerDefending;
 
     public Player()
     {
         hp = maxHP;
         mp = maxMP;
-        level = 1;
-        gold = 5;
-        damage = 10;
+        weapon = new() { Name = "Fist"};
 
         inFight["attack"] = () =>
         {
+            playerDefending = false;
+
             damage = Random.Shared.Next((int)weapon.MinDamage, (int)weapon.MaxDamage);
 
             if (potionDuration > 0)
@@ -38,15 +38,38 @@ public class Player
 
             if (target.Defending == false)
             {
+                Console.WriteLine($"{damage} player Dmg");
+                Console.WriteLine($"{target.Armor} armor");
                 target.Hp -= damage - target.Armor;
             }
             else
             {
-                Console.WriteLine($"{target.Armor}");
+                Console.WriteLine($"{damage} player Dmg");
+                Console.WriteLine($"{target.Armor} armor");
+                Console.WriteLine($"{target.Armor * 1.5} buffed armor");
                 target.Hp -= damage - Math.Round(target.Armor * 1.5);
-                Console.WriteLine($"{target.Armor}");
             }
         };
+
+        inFight["defend"] = () =>
+        {
+            playerDefending = true;
+        };
+
+        inFight["items"] = () =>
+        {
+
+        };
+    }
+
+    public string PlayerAction
+    {
+        get => actions;
+
+        set
+        {
+            actions = value;
+        }
     }
 
     public float MaxHP
@@ -100,10 +123,7 @@ public class Player
 
         set
         {
-            hp += value;
-
-            if (hp < 0) hp = 0;
-            if (hp > maxHP) hp = maxHP;
+            hp = Math.Clamp(value, 0, maxHP);
         }
     }
 
@@ -113,12 +133,7 @@ public class Player
 
         set
         {
-            if ((mp += value) >= 0)
-            {
-                mp += value;
-            }
-
-            if (mp > maxMP) mp = maxMP;
+            mp = Math.Clamp(value, 0, maxMP);
         }
     }
 
@@ -133,7 +148,7 @@ public class Player
 
         set
         {
-            xp += value;
+            xp = value;
 
             if (xp >= 15 * level * 1.25f)
             {
@@ -153,7 +168,7 @@ public class Player
         {
             if ((gold += value) >= 0)
             {
-                gold += value;
+                gold = value;
             }
         }
     }
@@ -162,23 +177,55 @@ public class Player
     {
         if (lifeStealDuration > 0)
         {
-            hp += damage * life.HelaAmount;
+            hp = damage * life.HelaAmount;
         }
     }
 
-    public void ActionsForFight(Weapon weapon, StrengthPotion strengthPotion, Enemy target)
+    public void ActionsForFight(Weapon weapon, StrengthPotion strengthPotion, Enemy target, string actions)
     {
-        inFight["attack"]();
+        this.target = target;
 
-        inFight["defend"]();
+        if (actions == "attack")
         {
+            inFight["attack"]();
+        }
 
+        else if (actions == "defend")
+        {
+            inFight["defend"]();
+        }
+
+        else if (actions == "items")
+        {
+            inFight["items"]();
+        }
+
+        this.target = null;
+    }
+
+    public void printFightActions()
+    {
+        foreach (string key in inFight.Keys)
+        {
+            Console.Write($"{key}:  ");
+        }
+
+        Console.WriteLine();
+    }
+
+    public void PickAction(Player player)
+    {
+        Console.WriteLine("skriv vad du vill göra");
+        string Chois = Console.ReadLine().ToLower();
+
+        while (!player.inFight.Keys.Contains(Chois))
+        {
+            Console.WriteLine("Du måste skriva ett av alternativen");
+            player.printFightActions();
+            Chois = Console.ReadLine().ToLower();
         }
     }
 
     public Dictionary<string, Action> inFight = new();
     public Dictionary<string, Action> inWorld = new();
-
-
-
 }
