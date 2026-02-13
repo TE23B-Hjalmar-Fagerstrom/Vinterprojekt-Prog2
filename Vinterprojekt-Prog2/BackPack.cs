@@ -1,6 +1,16 @@
 public class BackPack
 {
     private List<Item> items = [];
+    private Queue<Item> equippedWeapon = [];
+
+    private Weapon weapon;
+
+    public BackPack()
+    {
+        weapon = new() {Name = "Fist"};
+
+        equippedWeapon.Enqueue(weapon);
+    }
 
     public List<Item> Items
     {

@@ -2,7 +2,7 @@ public class Boss : Enemy
 {
     public Boss(Player player) : base(player)
     {
-        randomMax = 150;
+        randomMax = 125;
         difficultyMultiplier = 1.75;
         MaxHp *= difficultyMultiplier;
         Hp = MaxHp;
@@ -10,15 +10,53 @@ public class Boss : Enemy
         XpDrop *= difficultyMultiplier;
         GoldDrop *= 2;
 
-        while (randomNum > 100 && randomNum <= 125)
+        EnemyName = "Boss";
+    }
+
+    public override void BattleLogic(Player player, Enemy target)
+    {
+        if (EnemyTurn == false)
         {
             randomNum = Random.Shared.Next(randomMin, randomMax + 1);
+
+            if (randomNum <= 50)
+            {
+                Console.WriteLine($"{EnemyName} Planerar att försvara sig ");
+            }
+
+            else if (randomNum > 50 && randomNum <= 100)
+            {
+                Console.WriteLine($"{EnemyName} Planerar att attackera dig ({Damage} skada)");
+            }
+
+            else if (randomNum > 100 && randomNum <= 125)
+            {
+                Console.WriteLine($"{EnemyName} Ladar up en speial attack ");
+            }
         }
 
-    }
+        if (EnemyTurn == true)
+        {
+            if (randomNum <= 50)
+            {
+                Defend();
+            }
 
-    public override void BattleLogic()
-    {
-        
+            else if (randomNum > 50 && randomNum <= 100)
+            {
+                Attack(player);
+            }
+
+            else if (randomNum > 100 && randomNum <= 125)
+            {
+                ArmorUp(target);
+            }
+
+            else
+            {
+                SpecialMove(player);
+            }
+        }
     }
 }
+

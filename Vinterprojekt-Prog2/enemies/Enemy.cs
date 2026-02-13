@@ -1,6 +1,6 @@
 public class Enemy
 {
-    private double maxHP = 50;
+    private double maxHP = 25;
     private double hp;
     private double damage = 10;
     private double armor = 1;
@@ -17,6 +17,8 @@ public class Enemy
     protected int randomNum;
     private int chargeUp = 2;
     private bool defending = false;
+    protected bool EnemyTurn = false;
+    protected string EnemyName;
 
     public Enemy(Player player)
     {
@@ -41,6 +43,8 @@ public class Enemy
 
         randomMin = 0;
         randomMax = 100;
+
+        EnemyName = "Fiende: ";
     }
 
     public bool Defending
@@ -170,8 +174,11 @@ public class Enemy
 
     public void ArmorUp(Enemy target)
     {
+        if (target.ArmorUpDuration <= 0)
+        {
+            target.Armor = target.Armor * armorMultiplier;
+        }
         target.ArmorUpDuration = 2;
-        target.Armor = target.Armor * armorMultiplier;
 
         Console.WriteLine($"Enemy Tank used armor up on {target}");
     }
@@ -185,7 +192,7 @@ public class Enemy
         {
             Damage *= 2;
             player.Hp -= Damage;
-            
+
             Damage /= 2;
             chargeUp = 2;
 
@@ -205,28 +212,49 @@ public class Enemy
         }
     }
 
-    public void BattleLogic(Player player, Enemy target)
+    public virtual void BattleLogic(Player player, Enemy target)
     {
-        randomNum = Random.Shared.Next(randomMin, randomMax + 1);
-
-        if (randomNum <= 50)
+        if (EnemyTurn == false)
         {
-            Defend();
+            randomNum = Random.Shared.Next(randomMin, randomMax + 1);
+
+            if (randomNum <= 50)
+            {
+                Console.WriteLine($"{EnemyName} planerar att försvara sig ");
+            }
+
+            else if (randomNum > 50 && randomNum <= 100)
+            {
+                Console.WriteLine($"{EnemyName} planerar att attackera dig ({Damage} skada)");
+            }
+
+            else if (randomNum > 100 && randomNum <= 125)
+            {
+                Console.WriteLine($"{EnemyName} planerar att ge en fiende mer armor");
+            }
         }
 
-        else if (randomNum > 50 && randomNum <= 100)
+        if (EnemyTurn == true)
         {
-            Attack(player);
-        }
+            if (randomNum <= 50)
+            {
+                Defend();
+            }
 
-        else if (randomNum > 100 && randomNum <= 125)
-        {
-            ArmorUp(target);
-        }
+            else if (randomNum > 50 && randomNum <= 100)
+            {
+                Attack(player);
+            }
 
-        else
-        {
-            SpecialMove(player);
+            else if (randomNum > 100 && randomNum <= 125)
+            {
+                ArmorUp(target);
+            }
+
+            else
+            {
+                SpecialMove(player);
+            }
         }
     }
 }

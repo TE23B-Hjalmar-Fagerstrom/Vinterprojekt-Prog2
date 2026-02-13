@@ -12,6 +12,8 @@ public class Tank : Enemy
         Armor = Math.Round(Armor);
         XpDrop = Math.Round(XpDrop);
         GoldDrop = Math.Round(GoldDrop);
+
+        EnemyName = "Tank: ";
     }
 
 }

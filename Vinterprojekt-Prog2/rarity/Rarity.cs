@@ -3,6 +3,8 @@ public class Rarity
     private string rarity;
     private int rarityLevel;
     private float rarityMultiplier;
+    protected int randomMin = 1;
+    protected int randomMax = 101;
 
     public string theRarity
     {
@@ -21,7 +23,7 @@ public class Rarity
 
     protected Rarity() // konstruktor 
     {
-        rarityLevel = Random.Shared.Next(1, 101);
+        rarityLevel = Random.Shared.Next(randomMin, randomMax);
 
         if (rarityLevel <= 35)
         {
@@ -29,19 +31,19 @@ public class Rarity
             rarityMultiplier = 1;
         }
 
-        if (rarityLevel <= 65 && rarityLevel > 35)
+        else if (rarityLevel <= 65 && rarityLevel > 35)
         {
             rarity = "Uncommon";
             rarityMultiplier = 1.2f;
         }
 
-        if (rarityLevel <= 85 && rarityLevel > 65)
+        else if (rarityLevel <= 85 && rarityLevel > 65)
         {
             rarity = "Rare";
             rarityMultiplier = 1.4f;
         }
 
-        if (rarityLevel <= 95 && rarityLevel > 85)
+        else if (rarityLevel <= 95 && rarityLevel > 85)
         {
             rarity = "Epic";
             rarityMultiplier = 1.7f;

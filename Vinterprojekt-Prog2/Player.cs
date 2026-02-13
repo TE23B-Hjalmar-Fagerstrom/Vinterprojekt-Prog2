@@ -21,13 +21,14 @@ public class Player
     {
         hp = maxHP;
         mp = maxMP;
-        weapon = new() { Name = "Fist"};
+        weapon = new();
+        Console.WriteLine($"{weapon.MinDamage} och {weapon.MaxDamage}");
 
         inFight["attack"] = () =>
         {
             playerDefending = false;
 
-            damage = Random.Shared.Next((int)weapon.MinDamage, (int)weapon.MaxDamage);
+            damage = Random.Shared.Next((int)weapon.MinDamage + level, (int)weapon.MaxDamage + level + 1);
 
             if (potionDuration > 0)
             {
@@ -38,15 +39,10 @@ public class Player
 
             if (target.Defending == false)
             {
-                Console.WriteLine($"{damage} player Dmg");
-                Console.WriteLine($"{target.Armor} armor");
                 target.Hp -= damage - target.Armor;
             }
             else
             {
-                Console.WriteLine($"{damage} player Dmg");
-                Console.WriteLine($"{target.Armor} armor");
-                Console.WriteLine($"{target.Armor * 1.5} buffed armor");
                 target.Hp -= damage - Math.Round(target.Armor * 1.5);
             }
         };
@@ -154,7 +150,7 @@ public class Player
             {
                 xp -= 15 * level * 1.25f;
                 level++;
-                maxHP++;
+                maxHP += 2;
                 maxMP++;
             }
         }
@@ -216,13 +212,13 @@ public class Player
     public void PickAction(Player player)
     {
         Console.WriteLine("skriv vad du vill göra");
-        string Chois = Console.ReadLine().ToLower();
+        actions = Console.ReadLine().ToLower();
 
-        while (!player.inFight.Keys.Contains(Chois))
+        while (!player.inFight.Keys.Contains(actions))
         {
             Console.WriteLine("Du måste skriva ett av alternativen");
             player.printFightActions();
-            Chois = Console.ReadLine().ToLower();
+            actions = Console.ReadLine().ToLower();
         }
     }
 
