@@ -3,6 +3,7 @@ public class Item : Rarity
     private string name;
     private double buyCost = 20;
     private double sellCost = 10;
+    protected string description;
 
     public Item()
     {
@@ -13,6 +14,13 @@ public class Item : Rarity
 
         sellCost = (sellCost + RarityMultiplier) * RarityMultiplier;
         sellCost = Math.Round(sellCost);
+
+        description = "";
+    }
+
+    public string Description
+    {
+        get => description;
     }
 
     public string Name

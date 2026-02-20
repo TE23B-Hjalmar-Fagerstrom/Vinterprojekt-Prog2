@@ -21,8 +21,7 @@ public class Player
     {
         hp = maxHP;
         mp = maxMP;
-        weapon = new();
-        Console.WriteLine($"{weapon.MinDamage} och {weapon.MaxDamage}");
+        weapon = inventory.EquippedWeapon.Dequeue();
 
         inFight["attack"] = () =>
         {
@@ -56,6 +55,20 @@ public class Player
         {
 
         };
+
+        inWorld["inventory"] = () =>
+        {
+            Console.WriteLine($"Använder: {weapon.Name} (kan göra {weapon.MinDamage} - {weapon.MaxDamage} skada)");
+            Console.WriteLine();
+
+            Console.WriteLine("I din ryggsäck:");
+            inventory.Display();
+        };
+    }
+
+    public bool PlayerDefending
+    {
+        get => playerDefending;
     }
 
     public string PlayerAction
@@ -66,6 +79,11 @@ public class Player
         {
             actions = value;
         }
+    }
+
+    public Weapon Weapon
+    {
+        get => weapon;
     }
 
     public float MaxHP
@@ -202,6 +220,16 @@ public class Player
     public void printFightActions()
     {
         foreach (string key in inFight.Keys)
+        {
+            Console.Write($"{key}:  ");
+        }
+
+        Console.WriteLine();
+    }
+
+    public void printWorldActions()
+    {
+        foreach (string key in inWorld.Keys)
         {
             Console.Write($"{key}:  ");
         }

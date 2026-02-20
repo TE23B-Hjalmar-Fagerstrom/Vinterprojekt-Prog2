@@ -1,13 +1,13 @@
 public class BackPack
 {
     private List<Item> items = [];
-    private Queue<Item> equippedWeapon = [];
+    private Queue<Weapon> equippedWeapon = [];
 
     private Weapon weapon;
 
     public BackPack()
     {
-        weapon = new() {Name = "Fist"};
+        weapon = new();
 
         equippedWeapon.Enqueue(weapon);
     }
@@ -22,11 +22,25 @@ public class BackPack
         }
     }
 
+    public Queue<Weapon> EquippedWeapon
+    {
+        get => equippedWeapon;
+    }
+
     public void Display()
     {
+        int itemCount = 1;
+
+        Console.WriteLine();
         for (int i = 0; i < items.Count; i++)
         {
-            Console.WriteLine(Items[i].Name);
+            Console.WriteLine($"({itemCount}) {Items[i].Name}: {items[i].Description}");
+            itemCount++;
         }
+    }
+
+    public void Equip()
+    {
+
     }
 }

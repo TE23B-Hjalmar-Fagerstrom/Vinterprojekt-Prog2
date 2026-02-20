@@ -9,7 +9,11 @@ public class StrengthPotion : Consumable
 
         UsesCurent = UsesMax;
         UsesDuration = 2;
+
         Name = "Strength Potion";
+
+        consumableValue = damageMultiplierFromPotion;
+        effect = $"Styrke multiplikator: användningar kvar({UsesCurent})";
     }
 
     public override void Use(Player target)

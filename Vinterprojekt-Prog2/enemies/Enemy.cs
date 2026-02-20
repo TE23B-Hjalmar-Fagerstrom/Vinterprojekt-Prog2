@@ -181,6 +181,8 @@ public class Enemy
         target.ArmorUpDuration = 2;
 
         Console.WriteLine($"Enemy Tank used armor up on {target}");
+
+        ArmordUpCheck();
     }
 
     public void SpecialMove(Player player)
@@ -198,6 +200,8 @@ public class Enemy
 
             randomMin = 0;
         }
+
+        ArmordUpCheck();
     }
 
     private void ArmordUpCheck()

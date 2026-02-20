@@ -4,28 +4,33 @@ public class Weapon : Item
     private double maxDamage = 15;
     private float damageMultiplier;
     private List<string> weaponNames = ["Svärd", "Yxa", "Klubba", "Spjut"];
-    public static bool firstWeapon = true;
 
     public Weapon()
     {
         if (firstWeapon == true)
         {
-            randomMax = 2;
+            theRarity = "Vanliga";
+            RarityMultiplier = 1;
             firstWeapon = false;
             Name = "knytnävar";
         }
         else
         {
-            Name = weaponNames[Random.Shared.Next(0, weaponNames.Count)];   
+            Name = weaponNames[Random.Shared.Next(0, weaponNames.Count)];
         }
 
         damageMultiplier = RarityMultiplier;
 
-        minDamage = (minDamage + RarityMultiplier + damageMultiplier) * damageMultiplier;
-        minDamage = Math.Round(minDamage);
+        if (RarityMultiplier > 1)
+        {
+            minDamage = (minDamage + RarityMultiplier + damageMultiplier) * damageMultiplier;
+            minDamage = Math.Round(minDamage);
 
-        maxDamage = (maxDamage + RarityMultiplier + damageMultiplier) * damageMultiplier;
-        maxDamage = Math.Round(maxDamage);
+            maxDamage = (maxDamage + RarityMultiplier + damageMultiplier) * damageMultiplier;
+            maxDamage = Math.Round(maxDamage);
+        }
+
+        description = $"({MinDamage} - {MaxDamage} skada)";
     }
 
     public double MinDamage

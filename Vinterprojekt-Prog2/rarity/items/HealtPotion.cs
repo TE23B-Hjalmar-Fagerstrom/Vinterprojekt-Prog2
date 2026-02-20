@@ -7,7 +7,10 @@ public class HealtPotion : Consumable
         healAmount = (25 + RarityMultiplier) * RarityMultiplier;
         healAmount = Math.Round(healAmount);
 
-        Name = "health Potion";
+        Name = "hälsa dryck";
+
+        consumableValue = healAmount;
+        effect = $"helande: användningar kvar({UsesCurent})";
     }
 
     public override void Use(Player target)

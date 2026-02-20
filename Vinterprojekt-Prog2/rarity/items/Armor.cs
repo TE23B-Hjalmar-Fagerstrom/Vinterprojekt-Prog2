@@ -3,16 +3,21 @@ public class Armor : Item
     private double armor = 5;
     private double mageArmor = 3;
     private float armorMultiplier;
+    private List<string> armorTyps = ["Hjälm", "Krop", "Fötter"];
 
     public Armor()
     {
+        armorMultiplier = RarityMultiplier + .1f;
+
         armor = (armor + armorMultiplier + RarityMultiplier) * armorMultiplier;
         armor = Math.Round(armor);
 
         mageArmor = (mageArmor + armorMultiplier + RarityMultiplier) * armorMultiplier;
         mageArmor = Math.Round(mageArmor);
 
-        armorMultiplier = RarityMultiplier;
+        Name = armorTyps[Random.Shared.Next(0, armorTyps.Count)];
+
+        description = $"skydd ({armor})";
     }
 
     public double Defens

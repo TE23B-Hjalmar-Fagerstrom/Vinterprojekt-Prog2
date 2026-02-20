@@ -3,6 +3,8 @@ public class Consumable : Item
     private double usesMax = 3;
     private double usesCurent;
     private double usesDuration;
+    protected double consumableValue;
+    protected string effect;
 
     public Consumable()
     {
@@ -10,6 +12,8 @@ public class Consumable : Item
         usesMax = Math.Round(usesMax);
 
         usesCurent = usesMax;
+
+        description = $"{consumableValue} {effect}";
     }
 
     public double UsesMax
