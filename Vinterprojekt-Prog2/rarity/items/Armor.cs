@@ -3,7 +3,7 @@ public class Armor : Item
     private double armor = 5;
     private double mageArmor = 3;
     private float armorMultiplier;
-    private List<string> armorTyps = ["Hjälm", "Krop", "Fötter"];
+    private List<string> armorTyps = ["Läder", "Koppar", "Stål"];
 
     public Armor()
     {
@@ -17,7 +17,9 @@ public class Armor : Item
 
         Name = armorTyps[Random.Shared.Next(0, armorTyps.Count)];
 
-        description = $"skydd ({armor})";
+        description = $"rustning (blockar {armor} skada)";
+
+        armorBool = true;
     }
 
     public double Defens

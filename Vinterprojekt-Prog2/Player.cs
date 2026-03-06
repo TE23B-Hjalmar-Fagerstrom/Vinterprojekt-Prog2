@@ -8,6 +8,7 @@ public class Player
     private float xp;
     private int level = 1;
     private int gold = 5;
+    private int pick;
     private double lifeStealDuration;
     private double potionDuration;
     private BackPack inventory = new();
@@ -23,7 +24,7 @@ public class Player
         mp = maxMP;
         weapon = inventory.EquippedWeapon.Dequeue();
 
-        inFight["attack"] = () =>
+        inFight["attackera"] = () =>
         {
             playerDefending = false;
 
@@ -46,23 +47,55 @@ public class Player
             }
         };
 
-        inFight["defend"] = () =>
+        inFight["försvara"] = () =>
         {
             playerDefending = true;
         };
 
-        inFight["items"] = () =>
+        inFight["magi"] = () =>
+        {
+            playerDefending = true;
+        };
+
+        inFight["föremål"] = () =>
         {
 
         };
 
-        inWorld["inventory"] = () =>
+        inWorld["lager"] = () =>
         {
             Console.WriteLine($"Använder: {weapon.Name} (kan göra {weapon.MinDamage} - {weapon.MaxDamage} skada)");
             Console.WriteLine();
 
             Console.WriteLine("I din ryggsäck:");
             inventory.Display();
+
+            Console.WriteLine("skriv numret som står till vänster av föremålet du vill utrusta.");
+            pick = TryP(inventory.Items.Count + 1);
+
+            if (pick < inventory.Items.Count)
+            {
+                if (inventory.Items[pick].WeaponBool == true)
+                {
+                    inventory.EquipWeapon(pick);
+
+                    if (pick <= inventory.Items.Count)
+                    {
+                        inventory.Items.Add(weapon);
+                        weapon = inventory.EquippedWeapon.Dequeue();
+                        Console.WriteLine($"Du utrustade {weapon.Name}. tryck enter för att lämna denna skärm");
+
+                        Console.ReadLine();
+                        Console.Clear();
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("Du valde att fortsätta använda vapnet du redan använde. tryck enter för att lämna denna skärm");
+                Console.ReadLine();
+                Console.Clear();
+            }
         };
     }
 
@@ -217,6 +250,14 @@ public class Player
         this.target = null;
     }
 
+    public void ActionsForWorld(string actions)
+    {
+        if (actions == "lager")
+        {
+            inWorld["lager"]();
+        }
+    }
+
     public void printFightActions()
     {
         foreach (string key in inFight.Keys)
@@ -237,7 +278,7 @@ public class Player
         Console.WriteLine();
     }
 
-    public void PickAction(Player player)
+    public void PickActionInFight(Player player)
     {
         Console.WriteLine("skriv vad du vill göra");
         actions = Console.ReadLine().ToLower();
@@ -248,6 +289,37 @@ public class Player
             player.printFightActions();
             actions = Console.ReadLine().ToLower();
         }
+    }
+
+    public void PickActionInWorld(Player player)
+    {
+        Console.WriteLine("skriv vad du vill göra");
+        actions = Console.ReadLine().ToLower();
+
+        while (!player.inWorld.Keys.Contains(actions))
+        {
+            Console.WriteLine("Du måste skriva ett av alternativen");
+            player.printWorldActions();
+            actions = Console.ReadLine().ToLower();
+        }
+    }
+
+    public int TryP(int countInItems) // TryP = TryParse
+    {
+        int pick = -10;
+
+        while (pick < 1 || pick > countInItems)
+        {
+            string pickText = Console.ReadLine();
+            int.TryParse(pickText, out pick);
+
+            if (pick < 1 || pick > countInItems)
+            {
+                Console.WriteLine("Du måste skriva ett giltigt tal");
+            }
+        }
+
+        return pick - 1;
     }
 
     public Dictionary<string, Action> inFight = new();

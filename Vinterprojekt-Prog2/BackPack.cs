@@ -31,16 +31,25 @@ public class BackPack
     {
         int itemCount = 1;
 
-        Console.WriteLine();
         for (int i = 0; i < items.Count; i++)
         {
             Console.WriteLine($"({itemCount}) {Items[i].Name}: {items[i].Description}");
             itemCount++;
         }
+
+        Console.WriteLine($"{items.Count + 1} Lämna");
     }
 
-    public void Equip()
+    public void EquipWeapon(int pick)
     {
-
+        if (items[pick].WeaponBool == true)
+        {
+            equippedWeapon.Enqueue((Weapon)items[pick]);
+            items.Remove(items[pick]);
+        }
+        else if (pick <= items.Count)
+        {
+            Console.WriteLine("Du kan inte använda det som ditt vapen");
+        }
     }
 }

@@ -4,6 +4,9 @@ public class Item : Rarity
     private double buyCost = 20;
     private double sellCost = 10;
     protected string description;
+    protected bool weaponBool = false;
+    protected bool consumableBool = false;
+    protected bool armorBool = false;
 
     public Item()
     {
@@ -17,6 +20,10 @@ public class Item : Rarity
 
         description = "";
     }
+
+    public bool WeaponBool{get => weaponBool;}
+    public bool ConsumableBool {get => consumableBool;}
+    public bool ArmorBool {get => armorBool;}
 
     public string Description
     {

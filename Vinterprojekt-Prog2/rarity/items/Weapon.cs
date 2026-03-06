@@ -13,6 +13,7 @@ public class Weapon : Item
             RarityMultiplier = 1;
             firstWeapon = false;
             Name = "knytnävar";
+            maxDamage = 10;
         }
         else
         {
@@ -31,6 +32,8 @@ public class Weapon : Item
         }
 
         description = $"({MinDamage} - {MaxDamage} skada)";
+
+        weaponBool = true;
     }
 
     public double MinDamage
