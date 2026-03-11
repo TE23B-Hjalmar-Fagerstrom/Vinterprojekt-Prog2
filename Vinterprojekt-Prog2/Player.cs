@@ -13,6 +13,7 @@ public class Player
     private double potionDuration;
     private BackPack inventory = new();
     private Weapon weapon;
+    private Armor armor;
     private StrengthPotion strengthPotion;
     private Enemy target;
     private string actions;
@@ -64,7 +65,16 @@ public class Player
 
         inWorld["lager"] = () =>
         {
-            Console.WriteLine($"Använder: {weapon.Name} (kan göra {weapon.MinDamage} - {weapon.MaxDamage} skada)");
+            Console.WriteLine("Använder: ");
+            Console.WriteLine($"Vapen: {weapon.Name} (kan göra {weapon.MinDamage} - {weapon.MaxDamage} skada)");
+            if (armor == null)
+            {
+                Console.WriteLine("Armor: ingen utrustad");
+            }
+            else
+            {
+                Console.WriteLine($"Armor: {armor.Name} (blockar {armor.Defens} fysisk skada och {armor.MageArmor} magisk skada)");
+            }
             Console.WriteLine();
 
             Console.WriteLine("I din ryggsäck:");
@@ -88,6 +98,30 @@ public class Player
                         Console.ReadLine();
                         Console.Clear();
                     }
+                }
+                else if (inventory.Items[pick].ArmorBool == true)
+                {
+                    inventory.EquipArmor(pick);
+
+                    if (pick <= inventory.Items.Count)
+                    {
+                        if (armor != null)
+                        {
+                            inventory.Items.Add(armor);
+                        }
+                        armor = inventory.EquippedArmor.Dequeue();
+                        Console.WriteLine($"Du utrustade {armor.Name}. tryck enter för att lämna denna skärm");
+
+                        Console.ReadLine();
+                        Console.Clear();
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"Du kan inte använda den här. tryck enter för att lämna denna skärm");
+
+                    Console.ReadLine();
+                    Console.Clear();
                 }
             }
             else
@@ -114,7 +148,7 @@ public class Player
         }
     }
 
-    public Weapon Weapon
+    public Weapon PlayerWeapon
     {
         get => weapon;
     }
@@ -302,6 +336,28 @@ public class Player
             player.printWorldActions();
             actions = Console.ReadLine().ToLower();
         }
+    }
+
+    public void WorldActions(Player player)
+    {
+        player.printWorldActions();
+
+        player.PickActionInWorld(player);
+
+        Console.Clear();
+
+        player.ActionsForWorld(player.PlayerAction);
+    }
+
+    public void FightActions(Player player, StrengthPotion strengthPotion, Enemy target)
+    {
+        player.printFightActions();
+
+        player.PickActionInFight(player);
+
+        Console.Clear();
+
+        player.ActionsForFight(player.PlayerWeapon, strengthPotion, target, player.PlayerAction);
     }
 
     public int TryP(int countInItems) // TryP = TryParse

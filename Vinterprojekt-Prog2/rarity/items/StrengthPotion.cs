@@ -14,6 +14,8 @@ public class StrengthPotion : Consumable
 
         consumableValue = damageMultiplierFromPotion;
         effect = $"Styrke multiplikator: användningar kvar({UsesCurent})";
+
+        TheDescription();
     }
 
     public override void Use(Player target)

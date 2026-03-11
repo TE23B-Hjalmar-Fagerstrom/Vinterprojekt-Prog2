@@ -2,6 +2,7 @@ public class BackPack
 {
     private List<Item> items = [];
     private Queue<Weapon> equippedWeapon = [];
+    private Queue<Armor> equippedArmor = [];
 
     private Weapon weapon;
 
@@ -27,6 +28,11 @@ public class BackPack
         get => equippedWeapon;
     }
 
+    public Queue<Armor> EquippedArmor
+    {
+        get => equippedArmor;
+    }
+
     public void Display()
     {
         int itemCount = 1;
@@ -47,9 +53,22 @@ public class BackPack
             equippedWeapon.Enqueue((Weapon)items[pick]);
             items.Remove(items[pick]);
         }
-        else if (pick <= items.Count)
+        else if (items[pick].WeaponBool == false)
         {
             Console.WriteLine("Du kan inte använda det som ditt vapen");
+        }
+    }
+
+    public void EquipArmor(int pick)
+    {
+        if (items[pick].ArmorBool == true)
+        {
+            equippedArmor.Enqueue((Armor)items[pick]);
+            items.Remove(items[pick]);
+        }
+        else if (items[pick].ArmorBool == false)
+        {
+            Console.WriteLine("Du kan inte använda det som din utrustning");
         }
     }
 }

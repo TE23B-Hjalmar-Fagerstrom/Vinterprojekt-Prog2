@@ -12,9 +12,6 @@ public class Consumable : Item
         usesMax = Math.Round(usesMax);
 
         usesCurent = usesMax;
-        effect = "hej";
-
-        description = $"{consumableValue} {effect}";
 
         consumableBool = true;
     }
@@ -46,6 +43,11 @@ public class Consumable : Item
 
     public virtual void Use(Player target)
     {
-        
+
+    }
+
+    public void TheDescription()
+    {
+        description = $"{consumableValue} {effect}";
     }
 }

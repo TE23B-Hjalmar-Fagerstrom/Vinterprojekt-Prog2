@@ -3,77 +3,62 @@ StrengthPotion strengthPotion = new();
 Enemy enemy = new(player);
 Tank tank = new(player);
 
-int random;
+int random = 0;
+int amount = 0;
 
 List<Enemy> enemiesAlive = [];
 List<Enemy> enemiesDead = [];
 
-for (int i = 0; i < 4; i++)
-{
-    Item newItem;
-    
-    random = Random.Shared.Next(1, 4);
-    if (random == 1)
-    {
-        newItem = new Weapon();
-    }
-    else if (random == 2)
-    {
-        newItem = new Armor ();
-    }
-    else
-    {
-        random = Random.Shared.Next(1, 4);
-        if (random == 1)
-        {
-            newItem = new HealtPotion();
-        }
-        else if (random == 2)
-        {
-            newItem = new ManaPotion();
-        }
-        else
-        {
-            newItem = new StrengthPotion();
-        }
-    }
-    player.Inventory.Items.Add(newItem);
-
-}
+NewItem(player, random, amount);
 
 // Console.WriteLine($"{player.Weapon.Name}");
 // Console.WriteLine($"{player.Damage}");
 // Console.WriteLine($"{enemy.Armor}");
-WorldActions(player);
+player.WorldActions(player);
 
 while (player.PlayerAction == "lager")
 {
-    WorldActions(player);
+    player.WorldActions(player);
 }
 
 Console.ReadLine();
 
-
-
-
-static void WorldActions(Player player)
+static Player NewItem(Player player, int random, int amount)
 {
-    player.printWorldActions();
+    amount = Random.Shared.Next(5, 11);
 
-    player.PickActionInWorld(player);
+    for (int i = 0; i < amount; i++)
+    {
+        Item newItem;
 
-    Console.Clear();
+        random = Random.Shared.Next(1, 4);
+        if (random == 1)
+        {
+            newItem = new Weapon();
+        }
+        else if (random == 2)
+        {
+            newItem = new Armor();
+        }
+        else
+        {
+            random = Random.Shared.Next(1, 4);
+            if (random == 1)
+            {
+                newItem = new HealtPotion();
+            }
+            else if (random == 2)
+            {
+                newItem = new ManaPotion();
+            }
+            else
+            {
+                newItem = new StrengthPotion();
+            }
+        }
 
-    player.ActionsForWorld(player.PlayerAction);
-}
+        player.Inventory.Items.Add(newItem);
+    }
 
-static void FightActions(Player player, StrengthPotion strengthPotion, Enemy target)
-{
-    player.printFightActions();
-
-    player.PickActionInFight(player);
-
-    Console.Clear();
-
-    player.ActionsForFight(player.Weapon, strengthPotion, target, player.PlayerAction);
+    return player;
 }

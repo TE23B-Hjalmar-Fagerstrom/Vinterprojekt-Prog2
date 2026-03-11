@@ -11,6 +11,8 @@ public class ManaPotion : Consumable
 
         consumableValue = manaAmount;
         effect = $"Mana: användningar kvar({UsesCurent})";
+
+        TheDescription();
     }
 
     public override void Use(Player target)
