@@ -2,6 +2,8 @@ public class Abilitie : Rarity
 {
     private double mageDamage;
     private double manaCost;
+    protected string name = "";
+    protected string description = "";
 
     public double MageDamage
     {
@@ -23,8 +25,23 @@ public class Abilitie : Rarity
         }
     }
 
-    public void Upgrade(float multiplier)
+    public string Name
     {
-        MageDamage = MageDamage * multiplier;
+        get => name;
+    }
+
+    public string Description
+    {
+        get => description;
+    }
+
+    public virtual void UseAbilitie(Enemy target, Player player)
+    {
+        
+    }
+
+    public virtual void Upgrade(float multiplier)
+    {
+        
     }
 }

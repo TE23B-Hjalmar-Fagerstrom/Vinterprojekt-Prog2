@@ -25,7 +25,7 @@ public class Armor : Item
             armor -= 2;
             mageArmor -= 1;
         }
-        else if (Name == $"{theRarity} stål rustning")
+        else if (Name == $"{theRarity} Stål rustning")
         {
             armor += 3;
             mageArmor += 2;

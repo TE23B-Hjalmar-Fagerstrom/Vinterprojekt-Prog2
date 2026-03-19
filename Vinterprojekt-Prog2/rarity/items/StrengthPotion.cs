@@ -6,6 +6,7 @@ public class StrengthPotion : Consumable
     public StrengthPotion()
     {
         damageMultiplierFromPotion = RarityMultiplier * RarityMultiplier;
+        damageMultiplierFromPotion = Math.Round(damageMultiplierFromPotion, 3);
 
         UsesCurent = UsesMax;
         UsesDuration = 2;
@@ -13,6 +14,7 @@ public class StrengthPotion : Consumable
         Name = "Strength Potion";
 
         consumableValue = damageMultiplierFromPotion;
+
         effect = $"Styrke multiplikator: användningar kvar({UsesCurent})";
 
         TheDescription();

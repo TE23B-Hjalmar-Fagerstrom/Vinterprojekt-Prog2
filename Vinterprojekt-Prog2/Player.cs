@@ -14,10 +14,14 @@ public class Player
     private BackPack inventory = new();
     private Weapon weapon;
     private Armor armor;
+    private Abilitie spell;
     private StrengthPotion strengthPotion;
     private Enemy target;
     private string actions;
     private bool playerDefending;
+    private bool hasUsedWorldAction = false;
+    private bool isInWorld;
+    private bool isInFight;
 
     public Player()
     {
@@ -55,7 +59,14 @@ public class Player
 
         inFight["magi"] = () =>
         {
-            playerDefending = true;
+            if (spell != null)
+            {
+                spell?.UseAbilitie(target, this);
+            }
+            else
+            {
+                Console.WriteLine("Du har inte en trollformel att utföra");
+            }
         };
 
         inFight["föremål"] = () =>
@@ -65,52 +76,67 @@ public class Player
 
         inWorld["lager"] = () =>
         {
-            Console.WriteLine("Använder: ");
-            Console.WriteLine($"Vapen: {weapon.Name} (kan göra {weapon.MinDamage} - {weapon.MaxDamage} skada)");
-            if (armor == null)
+            if (inventory.Items.Count >= 1)
             {
-                Console.WriteLine("Armor: ingen utrustad");
-            }
-            else
-            {
-                Console.WriteLine($"Armor: {armor.Name} (blockar {armor.Defens} fysisk skada och {armor.MageArmor} magisk skada)");
-            }
-            Console.WriteLine();
-
-            Console.WriteLine("I din ryggsäck:");
-            inventory.Display();
-
-            Console.WriteLine("skriv numret som står till vänster av föremålet du vill utrusta.");
-            pick = TryP(inventory.Items.Count + 1);
-
-            if (pick < inventory.Items.Count)
-            {
-                if (inventory.Items[pick].WeaponBool == true)
+                Console.WriteLine("Använder: ");
+                Console.WriteLine($"Vapen: {weapon.Name} (kan göra {weapon.MinDamage} - {weapon.MaxDamage} skada)");
+                if (armor == null)
                 {
-                    inventory.EquipWeapon(pick);
-
-                    if (pick <= inventory.Items.Count)
-                    {
-                        inventory.Items.Add(weapon);
-                        weapon = inventory.EquippedWeapon.Dequeue();
-                        Console.WriteLine($"Du utrustade {weapon.Name}. tryck enter för att lämna denna skärm");
-
-                        Console.ReadLine();
-                        Console.Clear();
-                    }
+                    Console.WriteLine("Armor: ingen utrustad");
                 }
-                else if (inventory.Items[pick].ArmorBool == true)
+                else
                 {
-                    inventory.EquipArmor(pick);
+                    Console.WriteLine($"Armor: {armor.Name} (blockar {armor.Defens} fysisk skada och {armor.MageArmor} magisk skada)");
+                }
+                if (spell != null)
+                {
+                    Console.WriteLine($"Förmåga: {spell.Name}");
+                }
+                Console.WriteLine();
 
-                    if (pick <= inventory.Items.Count)
+                Console.WriteLine("I din ryggsäck:");
+                inventory.Display();
+
+                Console.WriteLine();
+                Console.WriteLine("skriv numret som står till vänster av föremålet du vill utrusta.");
+                pick = TryP(inventory.Items.Count + 1);
+
+                if (pick < inventory.Items.Count)
+                {
+                    if (inventory.Items[pick].WeaponBool == true)
                     {
-                        if (armor != null)
+                        inventory.EquipWeapon(pick);
+
+                        if (pick <= inventory.Items.Count)
                         {
-                            inventory.Items.Add(armor);
+                            inventory.Items.Add(weapon);
+                            weapon = inventory.EquippedWeapon.Dequeue();
+                            Console.WriteLine($"Du utrustade {weapon.Name}. tryck enter för att lämna denna skärm");
+
+                            Console.ReadLine();
+                            Console.Clear();
                         }
-                        armor = inventory.EquippedArmor.Dequeue();
-                        Console.WriteLine($"Du utrustade {armor.Name}. tryck enter för att lämna denna skärm");
+                    }
+                    else if (inventory.Items[pick].ArmorBool == true)
+                    {
+                        inventory.EquipArmor(pick);
+
+                        if (pick <= inventory.Items.Count)
+                        {
+                            if (armor != null)
+                            {
+                                inventory.Items.Add(armor);
+                            }
+                            armor = inventory.EquippedArmor.Dequeue();
+                            Console.WriteLine($"Du utrustade {armor.Name}. tryck enter för att lämna denna skärm");
+
+                            Console.ReadLine();
+                            Console.Clear();
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Du kan inte använda den här. tryck enter för att lämna denna skärm");
 
                         Console.ReadLine();
                         Console.Clear();
@@ -118,24 +144,59 @@ public class Player
                 }
                 else
                 {
-                    Console.WriteLine($"Du kan inte använda den här. tryck enter för att lämna denna skärm");
-
+                    Console.WriteLine("Du valde att fortsätta använda det du redan använde. tryck enter för att lämna denna skärm");
                     Console.ReadLine();
                     Console.Clear();
                 }
             }
             else
             {
-                Console.WriteLine("Du valde att fortsätta använda vapnet du redan använde. tryck enter för att lämna denna skärm");
+                Console.WriteLine("du har inget i din ryggsäck. tryck enter för att lämna denna skärm");
                 Console.ReadLine();
                 Console.Clear();
             }
+        };
+
+        inWorld["upgradera"] = () =>
+        {
+            if (hasUsedWorldAction == false)
+            {
+                float multiplier = Random.Shared.Next(1, 6);
+                multiplier = 1 + (multiplier / 10);
+                spell?.Upgrade(multiplier);
+
+                hasUsedWorldAction = true;
+            }
+            else
+            {
+                Console.WriteLine("Du har redan gjort ditt engångs val");
+            }
+        };
+
+        inWorld["villa"] = () =>
+        {
+            
+        };
+
+        inWorld["fortsätt"] = () =>
+        {
+            
         };
     }
 
     public bool PlayerDefending
     {
         get => playerDefending;
+    }
+
+    public bool IsInFight
+    {
+        get => isInFight;
+    }
+    
+    public bool IsInWorld
+    {
+        get => isInWorld;
     }
 
     public string PlayerAction
@@ -292,7 +353,7 @@ public class Player
         }
     }
 
-    public void printFightActions()
+    public void PrintFightActions()
     {
         foreach (string key in inFight.Keys)
         {
@@ -302,7 +363,7 @@ public class Player
         Console.WriteLine();
     }
 
-    public void printWorldActions()
+    public void PrintWorldActions()
     {
         foreach (string key in inWorld.Keys)
         {
@@ -317,10 +378,10 @@ public class Player
         Console.WriteLine("skriv vad du vill göra");
         actions = Console.ReadLine().ToLower();
 
-        while (!player.inFight.Keys.Contains(actions))
+        while (!player.inFight.ContainsKey(actions))
         {
             Console.WriteLine("Du måste skriva ett av alternativen");
-            player.printFightActions();
+            player.PrintFightActions();
             actions = Console.ReadLine().ToLower();
         }
     }
@@ -330,17 +391,17 @@ public class Player
         Console.WriteLine("skriv vad du vill göra");
         actions = Console.ReadLine().ToLower();
 
-        while (!player.inWorld.Keys.Contains(actions))
+        while (!player.inWorld.ContainsKey(actions))
         {
             Console.WriteLine("Du måste skriva ett av alternativen");
-            player.printWorldActions();
+            player.PrintWorldActions();
             actions = Console.ReadLine().ToLower();
         }
     }
 
     public void WorldActions(Player player)
     {
-        player.printWorldActions();
+        player.PrintWorldActions();
 
         player.PickActionInWorld(player);
 
@@ -351,7 +412,7 @@ public class Player
 
     public void FightActions(Player player, StrengthPotion strengthPotion, Enemy target)
     {
-        player.printFightActions();
+        player.PrintFightActions();
 
         player.PickActionInFight(player);
 
@@ -375,7 +436,86 @@ public class Player
             }
         }
 
+        Console.Clear();
+
         return pick - 1;
+    }
+
+    public void NewItem()
+    {
+        int amount = Random.Shared.Next(3, 6);
+
+        List<Item> tempHolder = [];
+
+        for (int i = 0; i < amount; i++)
+        {
+            int random = Random.Shared.Next(1, 5);
+
+            Item newItem = random switch
+            {
+                1 => new Weapon(),
+                2 => new Armor(),
+                3 => new HealtPotion(),
+                4 => new ManaPotion(),
+                _ => new StrengthPotion(),
+            };
+
+            tempHolder.Add(newItem);
+            Console.WriteLine($"{i + 1}: {tempHolder[i].Name} {tempHolder[i].Description}");
+
+            if (i == amount - 1)
+            {
+                Console.WriteLine();
+                Console.WriteLine("skriv numret till vänster om det föremål du vill ta");
+
+                int pick = TryP(tempHolder.Count);
+                Inventory.Items.Add(tempHolder[pick]);
+
+                for (int a = 0; a < tempHolder.Count; a++)
+                {
+                    tempHolder.Remove(tempHolder[a]);
+                }
+
+                i++;
+            }
+        }
+    }
+
+    public void PickAbility()
+    {
+        List<Abilitie> tempHolder = [];
+        int amount = 3;
+
+        for (int i = 0; i < amount; i++)
+        {
+            Abilitie newAbility = i switch
+            {
+                1 => new Fireball(),
+                2 => new HolyLight(),
+                _ => new LifeSteal()
+            };
+
+            tempHolder.Add(newAbility);
+
+            Console.WriteLine($"{i + 1}: {tempHolder[i].Description}");
+
+            if (i == amount - 1)
+            {
+                Console.WriteLine();
+                Console.WriteLine("skriv numret till vänster av förmågan du vill ha");
+
+                int pick = TryP(tempHolder.Count);
+                spell = tempHolder[pick];
+
+                for (int a = 0; a < tempHolder.Count; a++)
+                {
+                    tempHolder.Remove(tempHolder[a]);
+                }
+
+                i++;
+            }
+
+        }
     }
 
     public Dictionary<string, Action> inFight = new();

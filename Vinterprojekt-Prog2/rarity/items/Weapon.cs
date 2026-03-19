@@ -12,6 +12,7 @@ public class Weapon : Item
             theRarity = "Vanliga";
             RarityMultiplier = 1;
             firstWeapon = false;
+            salable = false;
             Name = "knytnävar";
             maxDamage = 10;
         }

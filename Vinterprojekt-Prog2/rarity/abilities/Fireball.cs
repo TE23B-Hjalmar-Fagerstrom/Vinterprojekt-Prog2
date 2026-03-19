@@ -1,6 +1,4 @@
-using System.Threading.Channels;
-
-public class Fireball : Upgrade
+public class Fireball : Abilitie
 {
     private double burnDuration;
     private double burnDamage;
@@ -23,6 +21,8 @@ public class Fireball : Upgrade
             burnDuration = 2 * RarityMultiplier;
         }
 
+        name = $"{theRarity} Eldklot";
+
         burnDamage = MageDamage * 0.25F;
 
         MageDamage = Math.Round(MageDamage);
@@ -30,11 +30,13 @@ public class Fireball : Upgrade
         burnDamage = Math.Round(burnDamage);
 
         ManaCost = 10;
+
+        description = $"{Name} skadar {MageDamage} och applicerar brinnande på fienden (gör {burnDamage} skada i {burnDuration} rundor) kåstar {ManaCost} mana";
     }
 
-    public void UseAbilitie(Enemy target, Player player)
+    public override void UseAbilitie(Enemy target, Player player)
     {
-        if (player.Mp >= 10)
+        if (player.Mp >= ManaCost)
         {
             target.Hp -= MageDamage;
             target.HowLongBurn += burnDuration;
@@ -44,6 +46,27 @@ public class Fireball : Upgrade
         else
         {
             Console.WriteLine("Du har inte tillräckligt med mana");
+        }
+    }
+
+    public override void Upgrade(float multiplier)
+    {
+        int num = Random.Shared.Next(1, 3);
+
+        switch (num)
+        {
+            case 1:
+                double oldMD = MageDamage;
+                MageDamage = Math.Round(MageDamage * multiplier);
+                Console.WriteLine($"skadan upgraderades från {oldMD} till {MageDamage} (påverkar inte brinnande skada)");
+                break;
+
+            case 2:
+
+            default:
+                ManaCost--;
+                Console.WriteLine($"{name} costar nu en mana mindre");
+                break;
         }
     }
 }
