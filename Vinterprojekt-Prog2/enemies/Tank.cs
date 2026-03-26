@@ -13,7 +13,6 @@ public class Tank : Enemy
         XpDrop = Math.Round(XpDrop);
         GoldDrop = Math.Round(GoldDrop);
 
-        EnemyName = "Tank: ";
+        EnemyName = "Spök riddare: ";
     }
-
 }

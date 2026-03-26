@@ -59,7 +59,16 @@ public class LifeSteal : Abilitie
 
     public override void Upgrade(float multiplier)
     {
-        int num = Random.Shared.Next(1, 3);
+        int num;
+
+        if (ManaCost > 1)
+        {
+            num = Random.Shared.Next(1, 4);  
+        }
+        else
+        {
+            num = Random.Shared.Next(1, 3);
+        }
 
         if (num == 2 && upgradeTheDuration == 0)
         {
@@ -78,7 +87,7 @@ public class LifeSteal : Abilitie
             case 1:
                 double oldHA = helaAmount;
                 helaAmount = Math.Round(helaAmount * multiplier, 4);
-                Console.WriteLine($"Du får nu {helaAmount * 100}% HP istället för {oldHA * 100}%");
+                Console.WriteLine($"Du får nu {Math.Round(helaAmount * 100, 4)}% HP istället för {oldHA * 100}%");
                 break;
 
             case 2:
@@ -95,7 +104,7 @@ public class LifeSteal : Abilitie
 
             default:
                 ManaCost--;
-                Console.WriteLine($"{name} costar nu en mana mindre");
+                Console.WriteLine($"{name} costar nu en mana mindre ({ManaCost} mana)");
                 break;
         }
     }

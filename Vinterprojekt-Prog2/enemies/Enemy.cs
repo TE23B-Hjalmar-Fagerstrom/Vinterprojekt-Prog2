@@ -17,17 +17,19 @@ public class Enemy
     protected int randomNum;
     private int chargeUp = 2;
     private bool defending = false;
-    protected bool EnemyTurn = false;
-    protected string EnemyName;
+    protected static bool enemyTurn = false;
+    protected string enemyName;
+
+    List<string> monster = ["Slime", "skelett", "zombie", "vampyr", "varulv"];
 
     public Enemy(Player player)
     {
-        maxHP = maxHP + (player.Level * 0.5f);
+        maxHP = maxHP + (player.Level * 1.5f);
         maxHP = Math.Round(maxHP);
 
         hp = maxHP;
 
-        damage = damage + (player.Level * 0.5f);
+        damage = damage + (player.Level * 1.5f);
         damage = Math.Round(damage);
 
         armor = armor + player.Level;
@@ -35,21 +37,31 @@ public class Enemy
 
         startArmor = armor;
 
-        xpDrop = xpDrop + (player.Level * 0.5f);
+        xpDrop = xpDrop + (player.Level * 1.5f);
         xpDrop = Math.Round(xpDrop);
 
-        goldDrop = goldDrop + (player.Level * 0.5f);
+        goldDrop = goldDrop + (player.Level * 1.5f);
         goldDrop = Math.Round(goldDrop);
 
         randomMin = 0;
         randomMax = 100;
 
-        EnemyName = "Fiende: ";
+        enemyName = $"{monster[Random.Shared.Next(0, monster.Count)]}: ";
     }
 
     public bool Defending
     {
         get => defending;
+    }
+
+    public bool EnemyTurn
+    {
+        get => enemyTurn;
+
+        set
+        {
+            enemyTurn = value;
+        }
     }
 
     public double MaxHp
@@ -158,6 +170,16 @@ public class Enemy
         }
     }
 
+    public string EnemyName
+    {
+        get => enemyName;
+
+        set 
+        { 
+            enemyName = value;
+        }
+    }
+
     public void Attack(Player player)
     {
         defending = false;
@@ -218,27 +240,27 @@ public class Enemy
 
     public virtual void BattleLogic(Player player, Enemy target)
     {
-        if (EnemyTurn == false)
+        if (enemyTurn == false)
         {
             randomNum = Random.Shared.Next(randomMin, randomMax + 1);
 
             if (randomNum <= 50)
             {
-                Console.WriteLine($"{EnemyName} planerar att försvara sig ");
+                Console.WriteLine($"{enemyName} planerar att försvara sig ");
             }
 
             else if (randomNum > 50 && randomNum <= 100)
             {
-                Console.WriteLine($"{EnemyName} planerar att attackera dig ({Damage} skada)");
+                Console.WriteLine($"{enemyName} planerar att attackera dig ({Damage} skada)");
             }
 
             else if (randomNum > 100 && randomNum <= 125)
             {
-                Console.WriteLine($"{EnemyName} planerar att ge en fiende mer armor");
+                Console.WriteLine($"{enemyName} planerar att ge en fiende mer armor");
             }
         }
 
-        if (EnemyTurn == true)
+        if (enemyTurn == true)
         {
             if (randomNum <= 50)
             {

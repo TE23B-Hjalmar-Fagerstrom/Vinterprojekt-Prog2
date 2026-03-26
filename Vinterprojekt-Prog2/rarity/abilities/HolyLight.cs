@@ -44,7 +44,17 @@ public class HolyLight : Abilitie
 
     public override void Upgrade(float multiplier)
     {
-        int num = Random.Shared.Next(1, 3);
+
+        int num;
+
+        if (ManaCost > 1)
+        {
+            num = Random.Shared.Next(1, 4);
+        }
+        else
+        {
+            num = Random.Shared.Next(1, 3);
+        }
 
         if (num == 2 && upgradeStunDuration == 0)
         {
@@ -80,7 +90,7 @@ public class HolyLight : Abilitie
 
             default:
                 ManaCost--;
-                Console.WriteLine($"{name} costar nu en mana mindre");
+                Console.WriteLine($"{name} costar nu en mana mindre ({ManaCost} mana)");
                 break;
         }
     }

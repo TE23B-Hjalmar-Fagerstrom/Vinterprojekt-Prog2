@@ -22,6 +22,7 @@ public class Player
     private bool hasUsedWorldAction = false;
     private bool isInWorld;
     private bool isInFight;
+    private bool isInShop = false;
 
     public Player()
     {
@@ -50,18 +51,22 @@ public class Player
             {
                 target.Hp -= damage - Math.Round(target.Armor * 1.5);
             }
+
+            target.EnemyTurn = true;
         };
 
         inFight["försvara"] = () =>
         {
             playerDefending = true;
+            target.EnemyTurn = true;
         };
 
         inFight["magi"] = () =>
         {
             if (spell != null)
             {
-                spell?.UseAbilitie(target, this);
+                spell.UseAbilitie(target, this);
+                target.EnemyTurn = true;
             }
             else
             {
@@ -159,13 +164,17 @@ public class Player
 
         inWorld["upgradera"] = () =>
         {
-            if (hasUsedWorldAction == false)
+            if (spell != null && hasUsedWorldAction == false)
             {
                 float multiplier = Random.Shared.Next(1, 6);
                 multiplier = 1 + (multiplier / 10);
-                spell?.Upgrade(multiplier);
+                spell.Upgrade(multiplier);
 
                 hasUsedWorldAction = true;
+            }
+            else if (hasUsedWorldAction == false && spell == null)
+            {
+                Console.WriteLine("Du har ingen förmåga att upgradera");
             }
             else
             {
@@ -173,14 +182,32 @@ public class Player
             }
         };
 
-        inWorld["villa"] = () =>
+        inWorld["vila"] = () =>
         {
-            
+            if (hasUsedWorldAction == false)
+            {
+                Hp += Math.Round(maxHP * 0.2);
+                Mp += Math.Round(maxMP * 0.2);
+
+                Console.WriteLine($"Du vilar och ditt HP är nu {hp} (+ {maxHP * 0.2}) och MP är {mp} (+ {maxMP * 0.2})");
+            }
+            else
+            {
+                Console.WriteLine("Du har redan gjort ditt engångs val");
+            }
         };
 
         inWorld["fortsätt"] = () =>
         {
-            
+            isInWorld = false;
+            if (Random.Shared.Next(1, 5) > 4)
+            {
+                isInShop = true;
+            }
+            else
+            {
+                isInFight = true;
+            }
         };
     }
 
@@ -193,10 +220,15 @@ public class Player
     {
         get => isInFight;
     }
-    
+
     public bool IsInWorld
     {
         get => isInWorld;
+    }
+
+    public bool IsInShop
+    {
+        get => isInShop;
     }
 
     public string PlayerAction
@@ -212,6 +244,11 @@ public class Player
     public Weapon PlayerWeapon
     {
         get => weapon;
+    }
+
+    public Abilitie Spell
+    {
+        get => spell;
     }
 
     public float MaxHP
@@ -351,6 +388,18 @@ public class Player
         {
             inWorld["lager"]();
         }
+        else if (actions == "upgradera")
+        {
+            inWorld["upgradera"]();
+        }
+        else if (actions == "vila")
+        {
+            inWorld["vila"]();
+        }
+        else if (actions == "fortsätt")
+        {
+            inWorld["fortsätt"]();
+        }
     }
 
     public void PrintFightActions()
@@ -401,16 +450,21 @@ public class Player
 
     public void WorldActions(Player player)
     {
-        player.PrintWorldActions();
+        isInWorld = true;
 
-        player.PickActionInWorld(player);
+        while (isInWorld == true)
+        {
+            player.PrintWorldActions();
 
-        Console.Clear();
+            player.PickActionInWorld(player);
 
-        player.ActionsForWorld(player.PlayerAction);
+            Console.Clear();
+
+            player.ActionsForWorld(player.PlayerAction);
+        }
     }
 
-    public void FightActions(Player player, StrengthPotion strengthPotion, Enemy target)
+    public void FightActions(Weapon playerWeapon, Player player, StrengthPotion strengthPotion, Enemy target)
     {
         player.PrintFightActions();
 
@@ -468,7 +522,7 @@ public class Player
                 Console.WriteLine();
                 Console.WriteLine("skriv numret till vänster om det föremål du vill ta");
 
-                int pick = TryP(tempHolder.Count);
+                pick = TryP(tempHolder.Count);
                 Inventory.Items.Add(tempHolder[pick]);
 
                 for (int a = 0; a < tempHolder.Count; a++)
@@ -504,7 +558,7 @@ public class Player
                 Console.WriteLine();
                 Console.WriteLine("skriv numret till vänster av förmågan du vill ha");
 
-                int pick = TryP(tempHolder.Count);
+                pick = TryP(tempHolder.Count);
                 spell = tempHolder[pick];
 
                 for (int a = 0; a < tempHolder.Count; a++)
@@ -516,6 +570,11 @@ public class Player
             }
 
         }
+    }
+
+    internal void FightActions(Weapon playerWeapon, StrengthPotion strengthPotion, Enemy enemy, string playerAction)
+    {
+        throw new NotImplementedException();
     }
 
     public Dictionary<string, Action> inFight = new();

@@ -1,5 +1,7 @@
 public class Boss : Enemy
 {
+    static int bossCount;
+
     public Boss(Player player) : base(player)
     {
         randomMax = 125;
@@ -9,8 +11,20 @@ public class Boss : Enemy
         Armor *= difficultyMultiplier;
         XpDrop *= difficultyMultiplier;
         GoldDrop *= 2;
+        bossCount ++;
 
-        EnemyName = "Boss";
+        if (bossCount < 5)
+        {
+            EnemyName = "Drakunge";
+        }
+        else if (bossCount < 10)
+        {
+            EnemyName = "Drake";
+        }
+        else
+        {
+            EnemyName = "Äldre Drake";
+        }
     }
 
     public override void BattleLogic(Player player, Enemy target)
@@ -59,4 +73,3 @@ public class Boss : Enemy
         }
     }
 }
-
