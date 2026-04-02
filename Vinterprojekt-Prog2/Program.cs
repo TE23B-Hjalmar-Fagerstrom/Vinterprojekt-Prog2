@@ -22,11 +22,12 @@ while (player.Hp > 0)
 
     if (player.Hp > 0)
     {
+        player.NewItem();
+
         if (player.Spell == null)
         {
             player.PickAbility();
         }
-        player.NewItem();
 
         player.WorldActions(player);
     }
@@ -39,7 +40,7 @@ void spawnEnemy(Player player)
 {
     if (bossFightCountDown >= 1)
     {
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < Random.Shared.Next(1, 4); i++)
         {
             if (Random.Shared.Next(1, 11) < 10)
             {
@@ -62,31 +63,46 @@ void spawnEnemy(Player player)
 
 void Fight()
 {
+    player.Pick = -1;
     spawnEnemy(player);
 
-    while (player.Hp > 0 || enemiesAlive.Count > 0)
+    while (player.Hp > 0 && enemiesAlive.Count > 0)
     {
         while (enemy.EnemyTurn == false)
         {
-            for (int i = 0; i < enemiesAlive.Count; i++)
+            if (player.Pick < 0)
             {
-                Console.WriteLine($"{i}: {enemiesAlive[i].EnemyName}");
-                enemiesAlive[i].BattleLogic(player, enemiesAlive[Random.Shared.Next(0, enemiesAlive.Count)]);
-                Console.WriteLine("");
+                for (int i = 0; i < enemiesAlive.Count; i++)
+                {
+                    Console.WriteLine($"{i + 1}: {enemiesAlive[i].EnemyName} HP {enemiesAlive[i].Hp}");
+                    enemiesAlive[i].BattleLogic(player, enemiesAlive[Random.Shared.Next(0, enemiesAlive.Count)]);
+                    Console.WriteLine("");
+                }
+                if (enemiesAlive.Count > 0)
+                {
+                    Console.WriteLine($"du har {player.Hp} hp");
+                    Console.WriteLine("");
+                    Console.WriteLine("skriv nummret till vänster av fienden du vill attackera");
+
+                    player.Pick = player.TryP(enemiesAlive.Count);
+                }
             }
 
-            player.FightActions(player.PlayerWeapon, strengthPotion, enemiesAlive[player.TryP(enemiesAlive.Count)], player.PlayerAction);
-            Console.WriteLine();
-
-            for (int i = 0; i < enemiesAlive.Count; i++)
+            if (enemiesAlive.Count > 0)
             {
-                if (enemiesAlive[i].Hp <= 0)
-                {
-                    Console.WriteLine($"{enemiesAlive[i].EnemyName} dräptes");
-                    Console.WriteLine();
+                player.FightActions(player.PlayerWeapon, player, strengthPotion, enemiesAlive[player.Pick]);
+                Console.WriteLine();
 
-                    enemiesDead.Add(enemiesAlive[i]);
-                    enemiesAlive.Remove(enemiesAlive[i]);
+                for (int i = 0; i < enemiesAlive.Count; i++)
+                {
+                    if (enemiesAlive[i].Hp <= 0)
+                    {
+                        Console.WriteLine($"{enemiesAlive[i].EnemyName} dräptes");
+                        Console.WriteLine();
+
+                        enemiesDead.Add(enemiesAlive[i]);
+                        enemiesAlive.Remove(enemiesAlive[i]);
+                    }
                 }
             }
         }
@@ -96,7 +112,32 @@ void Fight()
             enemiesAlive[i].BattleLogic(player, enemiesAlive[Random.Shared.Next(0, enemiesAlive.Count)]);
         }
 
+        Console.WriteLine("Tryck enter för att fortsätta");
 
+        Console.ReadLine();
+        Console.Clear();
+
+        player.Pick = -1;
+        enemy.EnemyTurn = false;
     }
 
+    for (int i = 0; i < enemiesDead.Count; i++)
+    {
+        player.Xp += enemiesDead[i].XpDrop;
+        player.Gold += (int)Math.Round(enemiesDead[i].GoldDrop);
+        Console.WriteLine($"du fick {enemiesDead[i].XpDrop} xp och {enemiesDead[i].GoldDrop} guld från {enemiesDead[i].EnemyName}");
+        Console.WriteLine();
+    }
+
+    while (enemiesDead.Count > 0)
+    {
+        enemiesDead.RemoveAt(0);
+    }
+    
+    Console.WriteLine("Tryck enter för att välja din belöning");
+    Console.ReadLine();
+    Console.Clear();
+
+    player.IsInFight = false;
+    player.IsInWorld = true;
 }

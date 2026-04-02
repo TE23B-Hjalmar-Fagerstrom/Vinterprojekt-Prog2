@@ -17,6 +17,7 @@ public class Enemy
     protected int randomNum;
     private int chargeUp = 2;
     private bool defending = false;
+    protected bool hasRolled = false;
     protected static bool enemyTurn = false;
     protected string enemyName;
 
@@ -24,23 +25,23 @@ public class Enemy
 
     public Enemy(Player player)
     {
-        maxHP = maxHP + (player.Level * 1.5f);
+        maxHP += player.Level * 1.5f;
         maxHP = Math.Round(maxHP);
 
         hp = maxHP;
 
-        damage = damage + (player.Level * 1.5f);
+        damage += player.Level * 1.5f;
         damage = Math.Round(damage);
 
-        armor = armor + player.Level;
+        armor += player.Level;
         armor = Math.Round(armor);
 
         startArmor = armor;
 
-        xpDrop = xpDrop + (player.Level * 1.5f);
+        xpDrop += Random.Shared.Next(-player.Level, (int)Math.Round(player.Level * 1.5f));
         xpDrop = Math.Round(xpDrop);
 
-        goldDrop = goldDrop + (player.Level * 1.5f);
+        goldDrop += Random.Shared.Next(-player.Level, (int)Math.Round(player.Level * 1.5f));
         goldDrop = Math.Round(goldDrop);
 
         randomMin = 0;
@@ -174,8 +175,8 @@ public class Enemy
     {
         get => enemyName;
 
-        set 
-        { 
+        set
+        {
             enemyName = value;
         }
     }
@@ -183,6 +184,28 @@ public class Enemy
     public void Attack(Player player)
     {
         defending = false;
+        if (player.PlayerDefending == false)
+        {
+            player.Hp -= damage;
+            Console.WriteLine($"{enemyName} gjorde {damage} skada på dig");
+        }
+        else if (player.PlayerDefending == true && player.Armor != null)
+        {
+            player.Hp -= Math.Round((damage - player.Armor.Defens) * player.Block);
+            Console.WriteLine($"{enemyName} gjorde {(damage - player.Armor.Defens) * player.Block} skada på dig");
+        }
+        else if (player.PlayerDefending == false && player.Armor != null)
+        {
+            player.Hp -= Math.Round(damage - player.Armor.Defens);
+            Console.WriteLine($"{enemyName} gjorde {damage - player.Armor.Defens} skada på dig");
+        }
+        else
+        {
+            player.Hp -= Math.Round(damage * player.Block);
+            Console.WriteLine($"{enemyName} gjorde {damage * player.Block} skada på dig");
+        }
+
+        Console.WriteLine();
 
         ArmordUpCheck();
     }
@@ -196,19 +219,21 @@ public class Enemy
 
     public void ArmorUp(Enemy target)
     {
+        defending = false;
         if (target.ArmorUpDuration <= 0)
         {
             target.Armor = target.Armor * armorMultiplier;
         }
         target.ArmorUpDuration = 2;
 
-        Console.WriteLine($"Enemy Tank used armor up on {target}");
+        Console.WriteLine($"{enemyName} använde armor up på {target.EnemyName}");
 
         ArmordUpCheck();
     }
 
     public void SpecialMove(Player player)
     {
+        defending = false;
         chargeUp--;
         randomMin = randomMax;
 
@@ -242,25 +267,39 @@ public class Enemy
     {
         if (enemyTurn == false)
         {
-            randomNum = Random.Shared.Next(randomMin, randomMax + 1);
+            if (hasRolled == false)
+            {
+                randomNum = Random.Shared.Next(randomMin, randomMax + 1);
+            }
 
             if (randomNum <= 50)
             {
                 Console.WriteLine($"{enemyName} planerar att försvara sig ");
+                defending = true;
+                hasRolled = true;
             }
 
             else if (randomNum > 50 && randomNum <= 100)
             {
+                if (hasRolled == false)
+                {
+                    damage = Random.Shared.Next(5, (int)Math.Round(damage + (player.Level * 1.5f)));
+                }
+
+                hasRolled = true;
+
                 Console.WriteLine($"{enemyName} planerar att attackera dig ({Damage} skada)");
             }
 
             else if (randomNum > 100 && randomNum <= 125)
             {
                 Console.WriteLine($"{enemyName} planerar att ge en fiende mer armor");
+
+                hasRolled = true;
             }
         }
 
-        if (enemyTurn == true)
+        if (enemyTurn == true && hp > 0)
         {
             if (randomNum <= 50)
             {
@@ -281,6 +320,8 @@ public class Enemy
             {
                 SpecialMove(player);
             }
+
+            hasRolled = false;
         }
     }
 }

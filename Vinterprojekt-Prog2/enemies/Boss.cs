@@ -11,7 +11,7 @@ public class Boss : Enemy
         Armor *= difficultyMultiplier;
         XpDrop *= difficultyMultiplier;
         GoldDrop *= 2;
-        bossCount ++;
+        bossCount++;
 
         if (bossCount < 5)
         {
@@ -31,7 +31,10 @@ public class Boss : Enemy
     {
         if (EnemyTurn == false)
         {
-            randomNum = Random.Shared.Next(randomMin, randomMax + 1);
+            if (hasRolled == false)
+            {
+                randomNum = Random.Shared.Next(randomMin, randomMax + 1);
+            }
 
             if (randomNum <= 50)
             {
@@ -49,7 +52,7 @@ public class Boss : Enemy
             }
         }
 
-        if (EnemyTurn == true)
+        if (EnemyTurn == true && Hp > 0)
         {
             if (randomNum <= 50)
             {

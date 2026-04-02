@@ -5,7 +5,8 @@ public class Player
     private float maxMP = 30;
     private double mp;
     private double damage;
-    private float xp;
+    private double block;
+    private double xp;
     private int level = 1;
     private int gold = 5;
     private int pick;
@@ -46,10 +47,14 @@ public class Player
             if (target.Defending == false)
             {
                 target.Hp -= damage - target.Armor;
+                Console.WriteLine($"Du gjorde {damage - target.Armor} skada på {target.EnemyName}");
+                Console.WriteLine();
             }
             else
             {
                 target.Hp -= damage - Math.Round(target.Armor * 1.5);
+                Console.WriteLine($"Du gjorde {damage - Math.Round(target.Armor * 1.5)} skada på {target.EnemyName}");
+                Console.WriteLine();
             }
 
             target.EnemyTurn = true;
@@ -58,6 +63,7 @@ public class Player
         inFight["försvara"] = () =>
         {
             playerDefending = true;
+            block = 0.7;
             target.EnemyTurn = true;
         };
 
@@ -65,18 +71,34 @@ public class Player
         {
             if (spell != null)
             {
-                spell.UseAbilitie(target, this);
-                target.EnemyTurn = true;
+                if (mp < spell.ManaCost)
+                {
+                    spell.UseAbilitie(target, this);
+                    target.EnemyTurn = true;
+                }
+                else
+                {
+                    
+                    spell.UseAbilitie(target, this);
+                }
             }
             else
             {
                 Console.WriteLine("Du har inte en trollformel att utföra");
+                Console.WriteLine("tryck enter för att lämna denna skärm");
+
+                Console.ReadLine();
             }
         };
 
         inFight["föremål"] = () =>
         {
 
+        };
+
+        inFight["backa"] = () =>
+        {
+            pick = -1;
         };
 
         inWorld["lager"] = () =>
@@ -188,8 +210,9 @@ public class Player
             {
                 Hp += Math.Round(maxHP * 0.2);
                 Mp += Math.Round(maxMP * 0.2);
+                hasUsedWorldAction = true;
 
-                Console.WriteLine($"Du vilar och ditt HP är nu {hp} (+ {maxHP * 0.2}) och MP är {mp} (+ {maxMP * 0.2})");
+                Console.WriteLine($"Du vilar och ditt HP är nu {hp} (+ {Math.Round(maxHP * 0.2)}) och MP är {mp} (+ {Math.Round(maxMP * 0.2)})");
             }
             else
             {
@@ -200,6 +223,8 @@ public class Player
         inWorld["fortsätt"] = () =>
         {
             isInWorld = false;
+            hasUsedWorldAction = false;
+
             if (Random.Shared.Next(1, 5) > 4)
             {
                 isInShop = true;
@@ -219,16 +244,31 @@ public class Player
     public bool IsInFight
     {
         get => isInFight;
+
+        set
+        {
+            isInFight = value;
+        }
     }
 
     public bool IsInWorld
     {
         get => isInWorld;
+
+        set
+        {
+            isInWorld = value;
+        }
     }
 
     public bool IsInShop
     {
         get => isInShop;
+
+        set
+        {
+            isInShop = value;
+        }
     }
 
     public string PlayerAction
@@ -266,6 +306,11 @@ public class Player
         get => inventory;
     }
 
+    public Armor Armor
+    {
+        get => armor;
+    }
+
     public double Damage
     {
         get => damage;
@@ -274,6 +319,11 @@ public class Player
         {
             damage = value;
         }
+    }
+
+    public double Block
+    {
+        get => block;
     }
 
     public double LifeStealDuration
@@ -321,7 +371,7 @@ public class Player
         get => level;
     }
 
-    public float Xp
+    public double Xp
     {
         get => xp;
 
@@ -335,6 +385,7 @@ public class Player
                 level++;
                 maxHP += 2;
                 maxMP++;
+                Console.WriteLine($"Du levla up, du är nu level {level}");
             }
         }
     }
@@ -352,6 +403,16 @@ public class Player
         }
     }
 
+    public int Pick
+    {
+        get => pick;
+
+        set
+        {
+            pick = value;
+        }
+    }
+
     public void LifeStealActiv(LifeSteal life)
     {
         if (lifeStealDuration > 0)
@@ -364,19 +425,29 @@ public class Player
     {
         this.target = target;
 
-        if (actions == "attack")
+        if (actions == "attackera")
         {
-            inFight["attack"]();
+            inFight["attackera"]();
         }
 
-        else if (actions == "defend")
+        else if (actions == "försvara")
         {
-            inFight["defend"]();
+            inFight["försvara"]();
         }
 
-        else if (actions == "items")
+        else if (actions == "föremål")
         {
-            inFight["items"]();
+            inFight["föremål"]();
+        }
+
+        else if (actions == "magi")
+        {
+            inFight["magi"]();
+        }
+
+        else if (actions == "backa")
+        {
+            inFight["backa"]();
         }
 
         this.target = null;
@@ -425,7 +496,7 @@ public class Player
     public void PickActionInFight(Player player)
     {
         Console.WriteLine("skriv vad du vill göra");
-        actions = Console.ReadLine().ToLower();
+        actions = Console.ReadLine()?.ToLower();
 
         while (!player.inFight.ContainsKey(actions))
         {
@@ -552,6 +623,7 @@ public class Player
             tempHolder.Add(newAbility);
 
             Console.WriteLine($"{i + 1}: {tempHolder[i].Description}");
+            Console.WriteLine();
 
             if (i == amount - 1)
             {
@@ -568,13 +640,7 @@ public class Player
 
                 i++;
             }
-
         }
-    }
-
-    internal void FightActions(Weapon playerWeapon, StrengthPotion strengthPotion, Enemy enemy, string playerAction)
-    {
-        throw new NotImplementedException();
     }
 
     public Dictionary<string, Action> inFight = new();
