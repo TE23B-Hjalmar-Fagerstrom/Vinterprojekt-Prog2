@@ -4,6 +4,7 @@ Enemy enemy = new(player);
 Tank tank = new(player);
 
 int bossFightCountDown = 10;
+int rooms = 0;
 
 List<Enemy> enemiesAlive = [];
 List<Enemy> enemiesDead = [];
@@ -18,7 +19,20 @@ Console.Clear();
 
 while (player.Hp > 0)
 {
+    player.NewItem();
+    player.NewItem();
+    player.NewItem();
+    player.NewItem();
+    player.NewItem();
+    player.NewItem();
+    player.NewItem();
+    player.NewItem();
+    player.NewItem();
+
+
+
     Fight();
+    rooms++;
 
     if (player.Hp > 0)
     {
@@ -31,8 +45,9 @@ while (player.Hp > 0)
 
         player.WorldActions(player);
     }
-
 }
+
+Console.WriteLine($"På vägen genom slotet mötte du samma öde som alla före och efter dig, döden. du kom till rum {rooms} och hade samlat {player.Gold} guld");
 
 Console.ReadLine();
 
@@ -68,7 +83,7 @@ void Fight()
 
     while (player.Hp > 0 && enemiesAlive.Count > 0)
     {
-        while (enemy.EnemyTurn == false)
+        while (enemy.EnemyTurn == false && player.Hp > 0 && enemiesAlive.Count > 0)
         {
             if (player.Pick < 0)
             {
@@ -104,6 +119,8 @@ void Fight()
                         enemiesAlive.Remove(enemiesAlive[i]);
                     }
                 }
+
+                Console.WriteLine($"enemy turn {enemy.EnemyTurn}");
             }
         }
 
@@ -133,7 +150,7 @@ void Fight()
     {
         enemiesDead.RemoveAt(0);
     }
-    
+
     Console.WriteLine("Tryck enter för att välja din belöning");
     Console.ReadLine();
     Console.Clear();

@@ -38,10 +38,12 @@ public class Fireball : Abilitie
     {
         if (player.Mp >= ManaCost)
         {
-            target.Hp -= MageDamage;
             target.HowLongBurn += burnDuration;
+            target.Hp -= MageDamage;
 
             player.Mp -= ManaCost;
+
+            Console.WriteLine($"{target.EnemyName} tar {MageDamage} skada och börjar brina (vara i {target.HowLongBurn} rundor)");
         }
         else
         {

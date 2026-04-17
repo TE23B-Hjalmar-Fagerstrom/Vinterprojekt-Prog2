@@ -187,22 +187,22 @@ public class Enemy
         if (player.PlayerDefending == false)
         {
             player.Hp -= damage;
-            Console.WriteLine($"{enemyName} gjorde {damage} skada på dig");
+            Console.WriteLine($"{enemyName} gjorde {Math.Round(damage)} skada på dig");
         }
         else if (player.PlayerDefending == true && player.Armor != null)
         {
             player.Hp -= Math.Round((damage - player.Armor.Defens) * player.Block);
-            Console.WriteLine($"{enemyName} gjorde {(damage - player.Armor.Defens) * player.Block} skada på dig");
+            Console.WriteLine($"{enemyName} gjorde {Math.Round((damage - player.Armor.Defens) * player.Block)} skada på dig");
         }
         else if (player.PlayerDefending == false && player.Armor != null)
         {
             player.Hp -= Math.Round(damage - player.Armor.Defens);
-            Console.WriteLine($"{enemyName} gjorde {damage - player.Armor.Defens} skada på dig");
+            Console.WriteLine($"{enemyName} gjorde {Math.Round(damage - player.Armor.Defens)} skada på dig");
         }
         else
         {
             player.Hp -= Math.Round(damage * player.Block);
-            Console.WriteLine($"{enemyName} gjorde {damage * player.Block} skada på dig");
+            Console.WriteLine($"{enemyName} gjorde {Math.Round(damage * player.Block)} skada på dig");
         }
 
         Console.WriteLine();

@@ -21,6 +21,13 @@ public class ManaPotion : Consumable
         {
             target.Mp += manaAmount;
             UsesCurent--;
+            effect = $"Mana: användningar kvar({UsesCurent})";
+            TheDescription();
+
+            Console.WriteLine($"du använde {Name} och din mana är nu {target.Mp}. Den har {UsesCurent} användningar kvar");
+            Console.WriteLine($"Tryck enter för att lämna denna skärm");
+
+            Console.ReadLine();
         }
     }
 }

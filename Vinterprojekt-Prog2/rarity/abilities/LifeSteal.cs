@@ -45,6 +45,8 @@ public class LifeSteal : Abilitie
             player.LifeStealDuration += useDuration;
 
             usesPerFight--;
+
+            Console.WriteLine($"Du får nu {helaAmount}% av skadan du gör som HP");
         }
         else if (usesPerFight == 0)
         {
@@ -63,7 +65,7 @@ public class LifeSteal : Abilitie
 
         if (ManaCost > 1)
         {
-            num = Random.Shared.Next(1, 4);  
+            num = Random.Shared.Next(1, 4);
         }
         else
         {

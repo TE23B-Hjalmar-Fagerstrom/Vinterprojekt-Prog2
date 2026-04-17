@@ -44,10 +44,20 @@ public class Player
 
             damage = Math.Round(damage);
 
-            if (target.Defending == false)
+            if (target?.Defending == false)
             {
-                target.Hp -= damage - target.Armor;
-                Console.WriteLine($"Du gjorde {damage - target.Armor} skada på {target.EnemyName}");
+                Damage -= target.Armor;
+
+                target.Hp -= damage;
+                Console.WriteLine($"Du gjorde {damage} skada på {target.EnemyName}");
+
+                // if (lifeStealDuration > 0)
+                // {
+                //     Console.WriteLine($"och du fick {(damage - target.Armor) * (LifeSteal)spell.}");
+                // }
+
+                damage += target.Armor;
+
                 Console.WriteLine();
             }
             else
@@ -71,14 +81,13 @@ public class Player
         {
             if (spell != null)
             {
-                if (mp < spell.ManaCost)
+                if (mp >= spell.ManaCost)
                 {
                     spell.UseAbilitie(target, this);
                     target.EnemyTurn = true;
                 }
                 else
                 {
-                    
                     spell.UseAbilitie(target, this);
                 }
             }
@@ -93,7 +102,42 @@ public class Player
 
         inFight["föremål"] = () =>
         {
+            List<Consumable> tempHolder = [];
 
+            for (int i = 0; i < inventory.Items.Count; i++)
+            {
+                if (inventory.Items[i].ConsumableBool == true)
+                {
+                    tempHolder.Add((Consumable)inventory.Items[i]);
+                    inventory.Items.Remove(inventory.Items[i]);
+                    i--;
+                }
+            }
+
+            if (tempHolder.Count > 0)
+            {
+                for (int i = 0; i < tempHolder.Count; i++)
+                {
+                    Console.WriteLine($"{i + 1})  {tempHolder[i].Name}: {tempHolder[i].Description}");
+                }
+                Console.WriteLine();
+                Console.WriteLine("skriv nummret till vänster av föremålet du vill använda");
+
+                tempHolder[TryP(tempHolder.Count)].Use(this);
+
+                for (int i = 0; i < tempHolder.Count; i++)
+                {
+                    inventory.Items.Add(tempHolder[0]);
+                }
+                
+                tempHolder.Clear();
+            }
+            else
+            {
+                Console.WriteLine("Du har inga föremål");
+                Console.WriteLine("Tryck enter för att lämna denna skärm");
+                Console.ReadLine();
+            }
         };
 
         inFight["backa"] = () =>
@@ -317,7 +361,14 @@ public class Player
 
         set
         {
-            damage = value;
+            if (damage + value > 0)
+            {
+                damage = value;
+            }
+            else
+            {
+                damage = 0;
+            }
         }
     }
 
@@ -496,7 +547,7 @@ public class Player
     public void PickActionInFight(Player player)
     {
         Console.WriteLine("skriv vad du vill göra");
-        actions = Console.ReadLine()?.ToLower();
+        actions = Console.ReadLine().ToLower();
 
         while (!player.inFight.ContainsKey(actions))
         {

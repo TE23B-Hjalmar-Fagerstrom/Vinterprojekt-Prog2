@@ -35,6 +35,8 @@ public class HolyLight : Abilitie
             target.HowLongStund += stunDuration;
 
             player.Mp -= ManaCost;
+
+            Console.WriteLine($"{target.EnemyName} tar {MageDamage} skada och blir lamslagen (vara i {target.HowLongStund} rundor)");
         }
         else
         {
