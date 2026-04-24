@@ -4,7 +4,7 @@ public class HealtPotion : Consumable
 
     public HealtPotion()
     {
-        healAmount = (25 + RarityMultiplier) * RarityMultiplier;
+        healAmount = (15 + RarityMultiplier) * RarityMultiplier;
         healAmount = Math.Round(healAmount);
 
         Name = "hälso dryck";

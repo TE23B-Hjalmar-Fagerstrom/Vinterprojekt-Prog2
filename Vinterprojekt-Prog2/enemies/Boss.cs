@@ -6,7 +6,7 @@ public class Boss : Enemy
     {
         randomMax = 125;
         difficultyMultiplier = 1.75;
-        MaxHp *= difficultyMultiplier;
+        MaxHp = Math.Round(MaxHp * difficultyMultiplier * 1.5);
         Hp = MaxHp;
         Armor *= difficultyMultiplier;
         XpDrop *= difficultyMultiplier;
@@ -44,15 +44,18 @@ public class Boss : Enemy
             else if (randomNum > 50 && randomNum <= 100)
             {
                 Console.WriteLine($"{EnemyName} Planerar att attackera dig ({Damage} skada)");
+                defending = false;
             }
 
             else if (randomNum > 100 && randomNum <= 125)
             {
                 Console.WriteLine($"{EnemyName} Ladar up en speial attack ");
             }
+
+            hasRolled = true;
         }
 
-        if (EnemyTurn == true && Hp > 0)
+        if (EnemyTurn == true && Hp > 0 && howLongStund < 1)
         {
             if (randomNum <= 50)
             {
@@ -74,5 +77,7 @@ public class Boss : Enemy
                 SpecialMove(player);
             }
         }
+
+        EnemyTick(player);
     }
 }

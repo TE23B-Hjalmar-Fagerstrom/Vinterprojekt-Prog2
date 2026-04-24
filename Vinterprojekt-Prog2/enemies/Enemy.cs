@@ -1,14 +1,14 @@
 public class Enemy
 {
-    private double maxHP = 25;
+    private double maxHP = Random.Shared.Next(20, 31);
     private double hp;
     private double damage = 10;
     private double armor = 1;
     private double startArmor;
     private double goldDrop = 5;
     private double xpDrop = 4;
-    private double howLongStund;
-    private double howLongBurn;
+    protected double howLongStund;
+    protected double howLongBurn;
     private double armorUpDuration;
     protected double difficultyMultiplier;
     protected double armorMultiplier;
@@ -16,7 +16,7 @@ public class Enemy
     protected int randomMax;
     protected int randomNum;
     private int chargeUp = 2;
-    private bool defending = false;
+    protected bool defending = false;
     protected bool hasRolled = false;
     protected static bool enemyTurn = false;
     protected string enemyName;
@@ -25,7 +25,7 @@ public class Enemy
 
     public Enemy(Player player)
     {
-        maxHP += player.Level * 1.5f;
+        maxHP += player.Level * 1.5;
         maxHP = Math.Round(maxHP);
 
         hp = maxHP;
@@ -92,6 +92,11 @@ public class Enemy
         protected set
         {
             damage = value;
+
+            if (damage < 0)
+            {
+                damage = 0;
+            }
         }
     }
 
@@ -149,7 +154,7 @@ public class Enemy
         {
             howLongBurn = value;
 
-            if (howLongBurn <= 0)
+            if (howLongBurn < 0)
             {
                 howLongBurn = 0;
             }
@@ -183,26 +188,25 @@ public class Enemy
 
     public void Attack(Player player)
     {
-        defending = false;
         if (player.PlayerDefending == false)
         {
-            player.Hp -= damage;
-            Console.WriteLine($"{enemyName} gjorde {Math.Round(damage)} skada på dig");
+            player.Hp -= Damage;
+            Console.WriteLine($"{enemyName} gjorde {Math.Round(Damage)} skada på dig");
         }
         else if (player.PlayerDefending == true && player.Armor != null)
         {
-            player.Hp -= Math.Round((damage - player.Armor.Defens) * player.Block);
-            Console.WriteLine($"{enemyName} gjorde {Math.Round((damage - player.Armor.Defens) * player.Block)} skada på dig");
+            player.Hp -= Math.Round((Damage - player.Armor.Defens) * player.Block);
+            Console.WriteLine($"{enemyName} gjorde {Math.Round((Damage - player.Armor.Defens) * player.Block)} skada på dig");
         }
         else if (player.PlayerDefending == false && player.Armor != null)
         {
-            player.Hp -= Math.Round(damage - player.Armor.Defens);
-            Console.WriteLine($"{enemyName} gjorde {Math.Round(damage - player.Armor.Defens)} skada på dig");
+            player.Hp -= Math.Round(Damage - player.Armor.Defens);
+            Console.WriteLine($"{enemyName} gjorde {Math.Round(Damage - player.Armor.Defens)} skada på dig");
         }
         else
         {
-            player.Hp -= Math.Round(damage * player.Block);
-            Console.WriteLine($"{enemyName} gjorde {Math.Round(damage * player.Block)} skada på dig");
+            player.Hp -= Math.Round(Damage * player.Block);
+            Console.WriteLine($"{enemyName} gjorde {Math.Round(Damage * player.Block)} skada på dig");
         }
 
         Console.WriteLine();
@@ -263,6 +267,25 @@ public class Enemy
         }
     }
 
+    public void EnemyTick(Player player)
+    {
+        if (howLongStund > 0)
+        {
+            Console.WriteLine($"{enemyName} är lamslagen i {howLongStund} rundor");
+
+            howLongStund--;
+            hasRolled = false;
+        }
+
+        if (howLongBurn > 0)
+        {
+            Fireball fireball = (Fireball)player.Spell;
+
+            Hp -= fireball.BurnDamage;
+            howLongBurn--;
+        }
+    }
+
     public virtual void BattleLogic(Player player, Enemy target)
     {
         if (enemyTurn == false)
@@ -276,7 +299,6 @@ public class Enemy
             {
                 Console.WriteLine($"{enemyName} planerar att försvara sig ");
                 defending = true;
-                hasRolled = true;
             }
 
             else if (randomNum > 50 && randomNum <= 100)
@@ -284,9 +306,8 @@ public class Enemy
                 if (hasRolled == false)
                 {
                     damage = Random.Shared.Next(5, (int)Math.Round(damage + (player.Level * 1.5f)));
+                    defending = false;
                 }
-
-                hasRolled = true;
 
                 Console.WriteLine($"{enemyName} planerar att attackera dig ({Damage} skada)");
             }
@@ -294,12 +315,12 @@ public class Enemy
             else if (randomNum > 100 && randomNum <= 125)
             {
                 Console.WriteLine($"{enemyName} planerar att ge en fiende mer armor");
-
-                hasRolled = true;
             }
+
+            hasRolled = true;
         }
 
-        if (enemyTurn == true && hp > 0)
+        if (enemyTurn == true && hp > 0 && howLongStund < 1)
         {
             if (randomNum <= 50)
             {
@@ -323,5 +344,7 @@ public class Enemy
 
             hasRolled = false;
         }
+
+        EnemyTick(player);
     }
 }

@@ -23,7 +23,7 @@ public class Player
     private bool hasUsedWorldAction = false;
     private bool isInWorld;
     private bool isInFight;
-    private bool isInShop = false;
+    private bool tutorial = true;
 
     public Player()
     {
@@ -51,10 +51,14 @@ public class Player
                 target.Hp -= damage;
                 Console.WriteLine($"Du gjorde {damage} skada på {target.EnemyName}");
 
-                // if (lifeStealDuration > 0)
-                // {
-                //     Console.WriteLine($"och du fick {(damage - target.Armor) * (LifeSteal)spell.}");
-                // }
+                if (lifeStealDuration > 0)
+                {
+                    LifeSteal life = (LifeSteal)spell;
+
+                    Hp += damage * life.HelaAmount;
+
+                    Console.WriteLine($"och du fick {damage * life.HelaAmount}");
+                }
 
                 damage += target.Armor;
 
@@ -62,9 +66,21 @@ public class Player
             }
             else
             {
-                target.Hp -= damage - Math.Round(target.Armor * 1.5);
-                Console.WriteLine($"Du gjorde {damage - Math.Round(target.Armor * 1.5)} skada på {target.EnemyName}");
+                Damage -= Math.Round(target.Armor * 1.5);
+                target.Hp -= damage;
+                Console.WriteLine($"Du gjorde {damage} skada på {target.EnemyName}");
                 Console.WriteLine();
+
+                if (lifeStealDuration > 0)
+                {
+                    LifeSteal life = (LifeSteal)spell;
+
+                    Hp += damage * life.HelaAmount;
+
+                    Console.WriteLine($"och du fick {damage * life.HelaAmount}");
+                }
+
+                Damage += Math.Round(target.Armor * 1.5);
             }
 
             target.EnemyTurn = true;
@@ -120,23 +136,48 @@ public class Player
                 {
                     Console.WriteLine($"{i + 1})  {tempHolder[i].Name}: {tempHolder[i].Description}");
                 }
+
+                Console.WriteLine($"{tempHolder.Count + 1}) Backa");
                 Console.WriteLine();
                 Console.WriteLine("skriv nummret till vänster av föremålet du vill använda");
 
-                tempHolder[TryP(tempHolder.Count)].Use(this);
+                pick = TryP(tempHolder.Count + 1);
+
+                if (pick < tempHolder.Count)
+                {
+                    tempHolder[pick].Use(this);
+                }
+
+                if (strengthPotion == null)
+                {
+                    if (potionDuration > 0)
+                    {
+                        strengthPotion = (StrengthPotion)tempHolder[pick];
+                    }
+                }
+
+                if (potionDuration <= 0)
+                {
+                    strengthPotion = null;
+                }
 
                 for (int i = 0; i < tempHolder.Count; i++)
                 {
-                    inventory.Items.Add(tempHolder[0]);
+                    if (tempHolder[i].UsesCurent > 0)
+                    {
+                        inventory.Items.Add(tempHolder[i]);
+                    }
                 }
-                
+
                 tempHolder.Clear();
+                pick = -10;
             }
             else
             {
                 Console.WriteLine("Du har inga föremål");
                 Console.WriteLine("Tryck enter för att lämna denna skärm");
                 Console.ReadLine();
+                Console.Clear();
             }
         };
 
@@ -147,6 +188,12 @@ public class Player
 
         inWorld["lager"] = () =>
         {
+            // if (inventory.Items.Count == 0)
+            // {
+            //     // skriv vad som gick fel
+            //     return;
+            // }
+
             if (inventory.Items.Count >= 1)
             {
                 Console.WriteLine("Använder: ");
@@ -183,9 +230,6 @@ public class Player
                             inventory.Items.Add(weapon);
                             weapon = inventory.EquippedWeapon.Dequeue();
                             Console.WriteLine($"Du utrustade {weapon.Name}. tryck enter för att lämna denna skärm");
-
-                            Console.ReadLine();
-                            Console.Clear();
                         }
                     }
                     else if (inventory.Items[pick].ArmorBool == true)
@@ -200,32 +244,25 @@ public class Player
                             }
                             armor = inventory.EquippedArmor.Dequeue();
                             Console.WriteLine($"Du utrustade {armor.Name}. tryck enter för att lämna denna skärm");
-
-                            Console.ReadLine();
-                            Console.Clear();
                         }
                     }
                     else
                     {
                         Console.WriteLine($"Du kan inte använda den här. tryck enter för att lämna denna skärm");
-
-                        Console.ReadLine();
-                        Console.Clear();
                     }
                 }
                 else
                 {
                     Console.WriteLine("Du valde att fortsätta använda det du redan använde. tryck enter för att lämna denna skärm");
-                    Console.ReadLine();
-                    Console.Clear();
                 }
             }
             else
             {
                 Console.WriteLine("du har inget i din ryggsäck. tryck enter för att lämna denna skärm");
-                Console.ReadLine();
-                Console.Clear();
             }
+
+            Console.ReadLine();
+            Console.Clear();
         };
 
         inWorld["upgradera"] = () =>
@@ -269,14 +306,7 @@ public class Player
             isInWorld = false;
             hasUsedWorldAction = false;
 
-            if (Random.Shared.Next(1, 5) > 4)
-            {
-                isInShop = true;
-            }
-            else
-            {
-                isInFight = true;
-            }
+            isInFight = true;
         };
     }
 
@@ -302,16 +332,6 @@ public class Player
         set
         {
             isInWorld = value;
-        }
-    }
-
-    public bool IsInShop
-    {
-        get => isInShop;
-
-        set
-        {
-            isInShop = value;
         }
     }
 
@@ -355,6 +375,11 @@ public class Player
         get => armor;
     }
 
+    public StrengthPotion StrengthPotion
+    {
+        get => strengthPotion;
+    }
+
     public double Damage
     {
         get => damage;
@@ -384,6 +409,11 @@ public class Player
         set
         {
             lifeStealDuration = value;
+
+            if (lifeStealDuration < 0)
+            {
+                lifeStealDuration = 0;
+            }
         }
     }
 
@@ -394,6 +424,11 @@ public class Player
         set
         {
             potionDuration = value;
+
+            if (potionDuration < 0)
+            {
+                PotionDuration = 0;
+            }
         }
     }
 
@@ -403,7 +438,7 @@ public class Player
 
         set
         {
-            hp = Math.Clamp(value, 0, maxHP);
+            hp = Math.Round(Math.Clamp(value, 0, maxHP));
         }
     }
 
@@ -464,10 +499,11 @@ public class Player
         }
     }
 
-    public void LifeStealActiv(LifeSteal life)
+    public void LifeStealActiv()
     {
         if (lifeStealDuration > 0)
         {
+            LifeSteal life = (LifeSteal)spell;
             hp = damage * life.HelaAmount;
         }
     }
@@ -570,12 +606,19 @@ public class Player
         }
     }
 
-    public void WorldActions(Player player)
+    public void WorldOrder(Player player)
     {
         isInWorld = true;
 
         while (isInWorld == true)
         {
+            if (tutorial)
+            {
+                Console.WriteLine("Du har kommit till en viloplats och du kan titta igenom ditt lager, upgradera din magi och vila för hp och mana.");
+                Console.WriteLine("Du kan dock när det kommer till uppgradera och vila så får du bara göra en av dem en gång pär vilo plats. ");
+                Console.WriteLine();
+            }
+
             player.PrintWorldActions();
 
             player.PickActionInWorld(player);
@@ -586,7 +629,7 @@ public class Player
         }
     }
 
-    public void FightActions(Weapon playerWeapon, Player player, StrengthPotion strengthPotion, Enemy target)
+    public void FightOrder(Weapon playerWeapon, Player player, StrengthPotion strengthPotion, Enemy target)
     {
         player.PrintFightActions();
 
@@ -595,6 +638,9 @@ public class Player
         Console.Clear();
 
         player.ActionsForFight(player.PlayerWeapon, strengthPotion, target, player.PlayerAction);
+
+        player.PotionDuration--;
+        player.LifeStealDuration--;
     }
 
     public int TryP(int countInItems) // TryP = TryParse
@@ -625,7 +671,7 @@ public class Player
 
         for (int i = 0; i < amount; i++)
         {
-            int random = Random.Shared.Next(1, 5);
+            int random = Random.Shared.Next(1, 6);
 
             Item newItem = random switch
             {

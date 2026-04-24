@@ -7,12 +7,12 @@ public class HolyLight : Abilitie
     {
         if (RarityMultiplier == 1)
         {
-            MageDamage = 30;
+            MageDamage = 15;
             stunDuration = 1;
         }
         else
         {
-            MageDamage = (30 + RarityMultiplier) * RarityMultiplier;
+            MageDamage = (15 + RarityMultiplier) * RarityMultiplier;
             stunDuration = 1 + RarityMultiplier;
         }
 

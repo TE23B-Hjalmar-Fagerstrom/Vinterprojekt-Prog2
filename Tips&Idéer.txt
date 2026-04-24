@@ -1,8 +1,13 @@
 TIPS:
 
+(inte gjort än)
 ha en klass för buffs/debuffs och använda en lista i -
 karaktärerna för att hålla koll på dem 
 
 Idéer:
 
-gör en queue för equiped vapen och ta bort den första i kön när man equipar ett nyt vapen
+(gjort)
+gör en queue för equiped vapen och ta bort den första i kön när man equipar ett nyt vapen 
+
+(inte gjort än)
+gör så att det olicka raritys har färger i consolen samt att skada är röd

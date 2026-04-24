@@ -1,9 +1,7 @@
 ﻿Player player = new();
-StrengthPotion strengthPotion = new();
 Enemy enemy = new(player);
-Tank tank = new(player);
 
-int bossFightCountDown = 10;
+int bossFightCountDown = 2;
 int rooms = 0;
 
 List<Enemy> enemiesAlive = [];
@@ -19,20 +17,10 @@ Console.Clear();
 
 while (player.Hp > 0)
 {
-    player.NewItem();
-    player.NewItem();
-    player.NewItem();
-    player.NewItem();
-    player.NewItem();
-    player.NewItem();
-    player.NewItem();
-    player.NewItem();
-    player.NewItem();
+    // player.NewItem();
 
-
-
-    Fight();
-    rooms++;
+    // Fight();
+    // rooms++;
 
     if (player.Hp > 0)
     {
@@ -43,7 +31,7 @@ while (player.Hp > 0)
             player.PickAbility();
         }
 
-        player.WorldActions(player);
+        player.WorldOrder(player);
     }
 }
 
@@ -53,7 +41,7 @@ Console.ReadLine();
 
 void spawnEnemy(Player player)
 {
-    if (bossFightCountDown >= 1)
+    if (bossFightCountDown > 0)
     {
         for (int i = 0; i < Random.Shared.Next(1, 4); i++)
         {
@@ -105,7 +93,7 @@ void Fight()
 
             if (enemiesAlive.Count > 0)
             {
-                player.FightActions(player.PlayerWeapon, player, strengthPotion, enemiesAlive[player.Pick]);
+                player.FightOrder(player.PlayerWeapon, player, player.StrengthPotion, enemiesAlive[player.Pick]);
                 Console.WriteLine();
 
                 for (int i = 0; i < enemiesAlive.Count; i++)
@@ -119,8 +107,6 @@ void Fight()
                         enemiesAlive.Remove(enemiesAlive[i]);
                     }
                 }
-
-                Console.WriteLine($"enemy turn {enemy.EnemyTurn}");
             }
         }
 
@@ -140,20 +126,22 @@ void Fight()
 
     for (int i = 0; i < enemiesDead.Count; i++)
     {
+        Console.WriteLine($"du fick {enemiesDead[i].XpDrop} xp och {enemiesDead[i].GoldDrop} guld från {enemiesDead[i].EnemyName}");
+
         player.Xp += enemiesDead[i].XpDrop;
         player.Gold += (int)Math.Round(enemiesDead[i].GoldDrop);
-        Console.WriteLine($"du fick {enemiesDead[i].XpDrop} xp och {enemiesDead[i].GoldDrop} guld från {enemiesDead[i].EnemyName}");
+
         Console.WriteLine();
     }
 
-    while (enemiesDead.Count > 0)
-    {
-        enemiesDead.RemoveAt(0);
-    }
+    enemiesDead.Clear();
 
     Console.WriteLine("Tryck enter för att välja din belöning");
     Console.ReadLine();
     Console.Clear();
+
+    player.LifeStealDuration = 0;
+    player.PotionDuration = 0;
 
     player.IsInFight = false;
     player.IsInWorld = true;

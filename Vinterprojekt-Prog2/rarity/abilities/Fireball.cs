@@ -12,12 +12,12 @@ public class Fireball : Abilitie
     {
         if (RarityMultiplier == 1)
         {
-            MageDamage = 20;
+            MageDamage = 10;
             burnDuration = 2;
         }
         else
         {
-            MageDamage = (20 + RarityMultiplier) * RarityMultiplier;
+            MageDamage = (10 + RarityMultiplier) * RarityMultiplier;
             burnDuration = 2 * RarityMultiplier;
         }
 

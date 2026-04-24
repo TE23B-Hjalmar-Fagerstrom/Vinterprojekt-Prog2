@@ -46,7 +46,7 @@ public class LifeSteal : Abilitie
 
             usesPerFight--;
 
-            Console.WriteLine($"Du får nu {helaAmount}% av skadan du gör som HP");
+            Console.WriteLine($"Du får nu {helaAmount * 100}% av skadan du gör som HP");
         }
         else if (usesPerFight == 0)
         {

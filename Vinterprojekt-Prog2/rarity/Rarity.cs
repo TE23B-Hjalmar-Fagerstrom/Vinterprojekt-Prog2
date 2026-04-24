@@ -36,33 +36,33 @@ public class Rarity
     {
         rarityLevel = Random.Shared.Next(randomMin, randomMax);
 
-        if (rarityLevel <= 35 || firstWeapon == true)
+        if (rarityLevel <= 45 || firstWeapon == true)
         {
-            rarity = "Vanlig";
+            rarity = "(Vanlig)";
             rarityMultiplier = 1;
         }
 
-        else if (rarityLevel <= 65 && rarityLevel > 35)
+        else if (rarityLevel <= 75 && rarityLevel > 45)
         {
-            rarity = "Ovanlig";
+            rarity = "(Ovanlig)";
             rarityMultiplier = 1.2f;
         }
 
-        else if (rarityLevel <= 85 && rarityLevel > 65)
+        else if (rarityLevel <= 94 && rarityLevel > 75)
         {
-            rarity = "Sällsynt";
+            rarity = "(Sällsynt)";
             rarityMultiplier = 1.4f;
         }
 
-        else if (rarityLevel <= 95 && rarityLevel > 85)
+        else if (rarityLevel <= 99 && rarityLevel > 94)
         {
-            rarity = "Episk";
+            rarity = "(Episk)";
             rarityMultiplier = 1.7f;
         }
 
         else
         {
-            rarity = "Legendarisk";
+            rarity = "(Legendarisk)";
             rarityMultiplier = 2f;
         }
     }
