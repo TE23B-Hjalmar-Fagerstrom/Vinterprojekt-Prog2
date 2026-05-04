@@ -15,7 +15,7 @@ public class Enemy
     protected int randomMin;
     protected int randomMax;
     protected int randomNum;
-    private int chargeUp = 2;
+    protected int chargeUp = 2;
     protected bool defending = false;
     protected bool hasRolled = false;
     protected static bool enemyTurn = false;
@@ -23,7 +23,7 @@ public class Enemy
 
     List<string> monster = ["Slime", "skelett", "zombie", "vampyr", "varulv"];
 
-    public Enemy(Player player)
+    public Enemy(Player player) // ger vilka start värden/text variablerna ska ha 
     {
         maxHP += player.Level * 1.5;
         maxHP = Math.Round(maxHP);
@@ -186,24 +186,55 @@ public class Enemy
         }
     }
 
-    public void Attack(Player player)
+    private void ArmordUpCheck() // kollar om fienden har fått mer armor och minskar rundorna som den har med ett 
     {
-        if (player.PlayerDefending == false)
+        if (armorUpDuration > 0) // om armor up är aktiv så minskar rundorna som den her med ett
+        {
+            armorUpDuration--;
+        }
+        else if (armorUpDuration <= 0) // om den inte är aktiv längre får fienden tillbaka sin vanliga armor
+        {
+            armor = startArmor;
+        }
+    }
+
+    public void EnemyTick(Player player) // om fienden har en debuff så kommer denns effekt aktiveras och hur länge den varar minskar
+    {
+        if (howLongStund > 0) // om fienden är lamslagen så gör den inget och effekten minskar med ett
+        {
+            Console.WriteLine($"{enemyName} är lamslagen i {howLongStund} rundor");
+
+            howLongStund--;
+            hasRolled = false;
+        }
+
+        if (howLongBurn > 0) // om fienden briner så tar den skada vargje runda tills effekten avtar
+        {
+            Fireball fireball = (Fireball)player.Spell;
+
+            Hp -= fireball.BurnDamage;
+            howLongBurn--;
+        }
+    }
+
+    public void Attack(Player player) // hur skada på spelaren räknas
+    {
+        if (player.PlayerDefending == false && player.Armor == null) // hur skada räknas om spelaren inte försvarar och inte har armor
         {
             player.Hp -= Damage;
             Console.WriteLine($"{enemyName} gjorde {Math.Round(Damage)} skada på dig");
         }
-        else if (player.PlayerDefending == true && player.Armor != null)
+        else if (player.PlayerDefending == true && player.Armor != null) // hur skada räknas om spelaren försvarar och har armor
         {
             player.Hp -= Math.Round((Damage - player.Armor.Defens) * player.Block);
             Console.WriteLine($"{enemyName} gjorde {Math.Round((Damage - player.Armor.Defens) * player.Block)} skada på dig");
         }
-        else if (player.PlayerDefending == false && player.Armor != null)
+        else if (player.PlayerDefending == false && player.Armor != null) // hur skada räknas om spelaren inte försvarar och har armor
         {
             player.Hp -= Math.Round(Damage - player.Armor.Defens);
             Console.WriteLine($"{enemyName} gjorde {Math.Round(Damage - player.Armor.Defens)} skada på dig");
         }
-        else
+        else // hur skada räknas om spelaren försvarar och inte har armor
         {
             player.Hp -= Math.Round(Damage * player.Block);
             Console.WriteLine($"{enemyName} gjorde {Math.Round(Damage * player.Block)} skada på dig");
@@ -214,34 +245,35 @@ public class Enemy
         ArmordUpCheck();
     }
 
-    public void Defend()
+    public void Defend() // gör så att fienden försvarar mot spelaren
     {
         defending = true;
 
         ArmordUpCheck();
     }
 
-    public void ArmorUp(Enemy target)
+    public void ArmorUp(Enemy target) // ger en fiende mer armor under 2 rundor
     {
         defending = false;
-        if (target.ArmorUpDuration <= 0)
+        if (target.ArmorUpDuration <= 0) // om fienden redan har armor up så ökas bara hur länge effekten varar 
         {
-            target.Armor = target.Armor * armorMultiplier;
+            target.Armor *= armorMultiplier;
         }
-        target.ArmorUpDuration = 2;
+
+        target.ArmorUpDuration += 2;
 
         Console.WriteLine($"{enemyName} använde armor up på {target.EnemyName}");
 
         ArmordUpCheck();
     }
 
-    public void SpecialMove(Player player)
+    public void SpecialMove(Player player) // en speciell attack bara bossarna kan göra
     {
         defending = false;
         chargeUp--;
-        randomMin = randomMax;
+        randomMin = randomMax - 2;
 
-        if (chargeUp <= 0)
+        if (chargeUp <= 0) // om nedräkningen är klar så gör fienden dubelt så mycket skada än vanligt
         {
             Damage *= 2;
             player.Hp -= Damage;
@@ -255,72 +287,37 @@ public class Enemy
         ArmordUpCheck();
     }
 
-    private void ArmordUpCheck()
+    public virtual void BattleLogic(Player player, Enemy target) // logiken för vad fienden kommer att göra under striden
     {
-        if (armorUpDuration > 0)
+        if (enemyTurn == false) // när det inte är fiendens tur så kommer den slumpa vad den kommer att göra och skriva ut det till spelaren
         {
-            armorUpDuration--;
-        }
-        else if (armorUpDuration <= 0)
-        {
-            armor = startArmor;
-        }
-    }
-
-    public void EnemyTick(Player player)
-    {
-        if (howLongStund > 0)
-        {
-            Console.WriteLine($"{enemyName} är lamslagen i {howLongStund} rundor");
-
-            howLongStund--;
-            hasRolled = false;
-        }
-
-        if (howLongBurn > 0)
-        {
-            Fireball fireball = (Fireball)player.Spell;
-
-            Hp -= fireball.BurnDamage;
-            howLongBurn--;
-        }
-    }
-
-    public virtual void BattleLogic(Player player, Enemy target)
-    {
-        if (enemyTurn == false)
-        {
-            if (hasRolled == false)
+            if (hasRolled == false) // om fienden inte har slumpat vad den ska göra så gör den det 
             {
                 randomNum = Random.Shared.Next(randomMin, randomMax + 1);
+                hasRolled = true;
             }
 
-            if (randomNum <= 50)
+            if (randomNum <= 50) // om det slumpade tallet är 50 eller mindre så försvarar fienden sig
             {
                 Console.WriteLine($"{enemyName} planerar att försvara sig ");
                 defending = true;
             }
 
-            else if (randomNum > 50 && randomNum <= 100)
+            else if (randomNum > 50 && randomNum <= 100) // om det slumpade tallet är störe än 50 och mindre än 101 så attackera fienden
             {
-                if (hasRolled == false)
-                {
-                    damage = Random.Shared.Next(5, (int)Math.Round(damage + (player.Level * 1.5f)));
-                    defending = false;
-                }
+                damage = Random.Shared.Next(5, (int)Math.Round(damage + (player.Level * 1.5f))); // slumpar fiendens skada
+                defending = false;
 
                 Console.WriteLine($"{enemyName} planerar att attackera dig ({Damage} skada)");
             }
 
-            else if (randomNum > 100 && randomNum <= 125)
+            else if (randomNum > 100 && randomNum <= 125) // om det slumpade tallet är störe än 100 och mindre än 126 så ger fienden armor till en 
             {
                 Console.WriteLine($"{enemyName} planerar att ge en fiende mer armor");
             }
-
-            hasRolled = true;
         }
 
-        if (enemyTurn == true && hp > 0 && howLongStund < 1)
+        if (enemyTurn == true && hp > 0 && howLongStund < 1) // om fienden lever och inte är lamslagen så gör den det den hade planerat
         {
             if (randomNum <= 50)
             {

@@ -35,12 +35,12 @@ public class Abilitie : Rarity
         get => description;
     }
 
-    public virtual void UseAbilitie(Enemy target, Player player)
+    public virtual void UseAbilitie(Enemy target, Player player) // gör så att man kan använda variabeln Abilitie till förmågorna och fortfarand ha åtkomst till deras personliga UseAbilitie
     {
         
     }
 
-    public virtual void Upgrade(float multiplier)
+    public virtual void Upgrade(float multiplier) // gör så att man kan använda variabeln Abilitie till förmågorna och fortfarand ha åtkomst till deras personliga Upgrade
     {
         
     }

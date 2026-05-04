@@ -33,11 +33,11 @@ public class BackPack
         get => equippedArmor;
     }
 
-    public void Display()
+    public void Display() // skriver ut all information om det som finns i ryggsäcken
     {
         int itemCount = 1;
 
-        for (int i = 0; i < items.Count; i++)
+        for (int i = 0; i < items.Count; i++) // skriver ut items information den mängden items
         {
             Console.WriteLine($"({itemCount}) {Items[i].Name}: {items[i].Description}");
             itemCount++;
@@ -46,29 +46,21 @@ public class BackPack
         Console.WriteLine($"{items.Count + 1} Lämna");
     }
 
-    public void EquipWeapon(int pick)
+    public void EquipWeapon(int pick) // metoden gör så spelaren kan utrusta vappen
     {
-        if (items[pick].WeaponBool == true)
+        if (items[pick].WeaponBool == true) // om det spelaren valde var ett vappen så utrustas den och tas ur ryggsäcken
         {
             equippedWeapon.Enqueue((Weapon)items[pick]);
             items.Remove(items[pick]);
         }
-        else if (items[pick].WeaponBool == false)
-        {
-            Console.WriteLine("Du kan inte använda det som ditt vapen");
-        }
     }
 
-    public void EquipArmor(int pick)
+    public void EquipArmor(int pick) // metoden gör så spelaren kan utrusta armor 
     {
-        if (items[pick].ArmorBool == true)
+        if (items[pick].ArmorBool == true) // om det spelaren valde var armor så utrustas den och tas ur ryggsäcken
         {
             equippedArmor.Enqueue((Armor)items[pick]);
             items.Remove(items[pick]);
-        }
-        else if (items[pick].ArmorBool == false)
-        {
-            Console.WriteLine("Du kan inte använda det som din utrustning");
         }
     }
 }

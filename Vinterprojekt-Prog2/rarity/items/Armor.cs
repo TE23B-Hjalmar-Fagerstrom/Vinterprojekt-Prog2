@@ -1,37 +1,32 @@
 public class Armor : Item
 {
     private double armor = 5;
-    private double mageArmor = 3;
     private float armorMultiplier;
     private List<string> armorTyps = ["Läder rustning", "Koppar rustning", "Stål rustning"];
 
-    public Armor()
+    public Armor() // ger vilka start värden/text variablerna ska ha 
     {
-        armorMultiplier = RarityMultiplier + .1f;
+        armorMultiplier = RarityMultiplier + (RarityMultiplier / 10);
 
-        if (theRarity != "Vanlig")
+        if (theRarity != "Vanlig") // om rarity inte är common
         {
             armor = (armor + armorMultiplier + RarityMultiplier) * armorMultiplier;
             armor = Math.Round(armor);
 
-            mageArmor = (mageArmor + armorMultiplier + RarityMultiplier) * armorMultiplier;
-            mageArmor = Math.Round(mageArmor);
         }
 
         Name = armorTyps[Random.Shared.Next(0, armorTyps.Count)];
 
-        if (Name == $"{theRarity} Läder rustning")
+        if (Name == $"{theRarity} Läder rustning") // om rustningen är läder så får den mindre armor
         {
             armor -= 2;
-            mageArmor -= 1;
         }
-        else if (Name == $"{theRarity} Stål rustning")
+        else if (Name == $"{theRarity} Stål rustning") // om rustningen är stål får den mer armor
         {
             armor += 3;
-            mageArmor += 2;
         }
 
-        description = $"(blockar {armor} fysisk skada och {mageArmor} magisk skada)";
+        description = $"(blockar {armor} skada)";
 
         armorBool = true;
     }
@@ -39,11 +34,6 @@ public class Armor : Item
     public double Defens
     {
         get => armor;
-    }
-
-    public double MageArmor
-    {
-        get => mageArmor;
     }
 
     public float ArmorMultiplier

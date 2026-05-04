@@ -97,15 +97,7 @@ public class Player
         {
             if (spell != null)
             {
-                if (mp >= spell.ManaCost)
-                {
-                    spell.UseAbilitie(target, this);
-                    target.EnemyTurn = true;
-                }
-                else
-                {
-                    spell.UseAbilitie(target, this);
-                }
+                spell.UseAbilitie(target, this);
             }
             else
             {
@@ -188,12 +180,6 @@ public class Player
 
         inWorld["lager"] = () =>
         {
-            // if (inventory.Items.Count == 0)
-            // {
-            //     // skriv vad som gick fel
-            //     return;
-            // }
-
             if (inventory.Items.Count >= 1)
             {
                 Console.WriteLine("Använder: ");

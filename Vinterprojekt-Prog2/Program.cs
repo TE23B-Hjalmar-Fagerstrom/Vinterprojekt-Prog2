@@ -15,14 +15,12 @@ Console.WriteLine("tryck enter för att fortsätta");
 Console.ReadLine();
 Console.Clear();
 
-while (player.Hp > 0)
+while (player.Hp > 0) // så länge spelaren lever
 {
-    // player.NewItem();
+    Fight();
+    rooms++;
 
-    // Fight();
-    // rooms++;
-
-    if (player.Hp > 0)
+    if (player.Hp > 0) // om spelaren lever så får den belöningar 
     {
         player.NewItem();
 

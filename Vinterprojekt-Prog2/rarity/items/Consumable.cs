@@ -6,10 +6,9 @@ public class Consumable : Item
     protected double consumableValue;
     protected string effect;
 
-    public Consumable()
+    public Consumable() // ger vilka start värden/text variablerna ska ha 
     {
-        usesMax = usesMax * RarityMultiplier;
-        usesMax = Math.Round(usesMax);
+        usesMax = Math.Round(usesMax * RarityMultiplier);
 
         usesCurent = usesMax;
 
@@ -41,12 +40,12 @@ public class Consumable : Item
         }
     }
 
-    public virtual void Use(Player target)
+    public virtual void Use(Player target) // gör så att man kan använda variabeln Consumable till föremål och fortfarande ha åtkomst till deras personliga Use
     {
 
     }
 
-    public void TheDescription()
+    public void TheDescription() // ger en beskrivning av vad föremålet gör till spelaren
     {
         description = $"{consumableValue} {effect}";
     }
