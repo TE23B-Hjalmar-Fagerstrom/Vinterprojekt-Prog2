@@ -5,31 +5,28 @@ public class Weapon : Item
     private float damageMultiplier;
     private List<string> weaponNames = ["Svärd", "Yxa", "Klubba", "Spjut"];
 
-    public Weapon()
+    public Weapon() // ger vilka start värden/text variablerna ska ha 
     {
-        if (firstWeapon == true)
+        if (firstWeapon == true) // gör så att det första vapnet man för är 
         {
             theRarity = "Vanliga";
             RarityMultiplier = 1;
             firstWeapon = false;
-            salable = false;
             Name = "knytnävar";
             maxDamage = 10;
         }
-        else
+        else // anars ge ett vapen med slumpad namn
         {
             Name = weaponNames[Random.Shared.Next(0, weaponNames.Count)];
         }
 
-        damageMultiplier = RarityMultiplier;
+        damageMultiplier = RarityMultiplier + (RarityMultiplier / 10);
 
-        if (RarityMultiplier > 1)
+        if (RarityMultiplier > 1) // om vapnet inte är common
         {
-            minDamage = (minDamage + RarityMultiplier + damageMultiplier) * damageMultiplier;
-            minDamage = Math.Round(minDamage);
+            minDamage = Math.Round((minDamage + RarityMultiplier + damageMultiplier) * damageMultiplier);
 
-            maxDamage = (maxDamage + RarityMultiplier + damageMultiplier) * damageMultiplier;
-            maxDamage = Math.Round(maxDamage);
+            maxDamage = Math.Round((maxDamage + RarityMultiplier + damageMultiplier) * damageMultiplier);
         }
 
         description = $"({MinDamage} - {MaxDamage} skada)";

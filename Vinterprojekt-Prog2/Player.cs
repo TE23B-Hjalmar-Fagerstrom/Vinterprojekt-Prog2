@@ -25,60 +25,46 @@ public class Player
     private bool isInFight;
     private bool tutorial = true;
 
-    public Player()
+    public Player() // ger spelarens start värden och logiken till alla spelarens funktioner
     {
         hp = maxHP;
         mp = maxMP;
         weapon = inventory.EquippedWeapon.Dequeue();
 
-        inFight["attackera"] = () =>
+        inFight["attackera"] = () => // gör så att spelaren attackerar sin valda fiende
         {
             playerDefending = false;
 
             damage = Random.Shared.Next((int)weapon.MinDamage + level, (int)weapon.MaxDamage + level + 1);
 
-            if (potionDuration > 0)
+            if (potionDuration > 0) // kollar om spelaren har en styrke dryck 
             {
                 damage *= strengthPotion.DamageMultiplierFromPotion;
             }
 
             damage = Math.Round(damage);
 
-            if (target?.Defending == false)
+            if (target?.Defending == false) // om fienden som attackeras inte blockar så gör spelaren mer skada
             {
                 Damage -= target.Armor;
 
                 target.Hp -= damage;
                 Console.WriteLine($"Du gjorde {damage} skada på {target.EnemyName}");
 
-                if (lifeStealDuration > 0)
-                {
-                    LifeSteal life = (LifeSteal)spell;
-
-                    Hp += damage * life.HelaAmount;
-
-                    Console.WriteLine($"och du fick {damage * life.HelaAmount}");
-                }
+                LifeStealActiv(); // kollar om spelaren har LifeSteal och ger hp baserat på skadan som gjordes
 
                 damage += target.Armor;
 
                 Console.WriteLine();
             }
-            else
+            else // om fienden som attackeras blockar så gör spelaren minder skada
             {
                 Damage -= Math.Round(target.Armor * 1.5);
                 target.Hp -= damage;
                 Console.WriteLine($"Du gjorde {damage} skada på {target.EnemyName}");
                 Console.WriteLine();
 
-                if (lifeStealDuration > 0)
-                {
-                    LifeSteal life = (LifeSteal)spell;
-
-                    Hp += damage * life.HelaAmount;
-
-                    Console.WriteLine($"och du fick {damage * life.HelaAmount}");
-                }
+                LifeStealActiv(); // kollar om spelaren har LifeSteal och ger hp baserat på skadan som gjordes
 
                 Damage += Math.Round(target.Armor * 1.5);
             }
@@ -86,20 +72,20 @@ public class Player
             target.EnemyTurn = true;
         };
 
-        inFight["försvara"] = () =>
+        inFight["försvara"] = () => // gör så att spelaren försvarar mot fienderna
         {
             playerDefending = true;
             block = 0.7;
             target.EnemyTurn = true;
         };
 
-        inFight["magi"] = () =>
+        inFight["magi"] = () => // gör din förmåga
         {
-            if (spell != null)
+            if (spell != null) // om spelaren har en förmåga så görs förmågan
             {
                 spell.UseAbilitie(target, this);
             }
-            else
+            else // om spelaren inte har en förmåga förklaras det till spelaren
             {
                 Console.WriteLine("Du har inte en trollformel att utföra");
                 Console.WriteLine("tryck enter för att lämna denna skärm");
@@ -108,11 +94,11 @@ public class Player
             }
         };
 
-        inFight["föremål"] = () =>
+        inFight["föremål"] = () => // skriver ut alla potions spelaren har och använder den spelaren väljer
         {
             List<Consumable> tempHolder = [];
 
-            for (int i = 0; i < inventory.Items.Count; i++)
+            for (int i = 0; i < inventory.Items.Count; i++) // stoppar in alla potions i en temporär hållare som spelaren kan interagera med under strider
             {
                 if (inventory.Items[i].ConsumableBool == true)
                 {
@@ -122,9 +108,9 @@ public class Player
                 }
             }
 
-            if (tempHolder.Count > 0)
+            if (tempHolder.Count > 0) // om man har potions att använda
             {
-                for (int i = 0; i < tempHolder.Count; i++)
+                for (int i = 0; i < tempHolder.Count; i++) // skriver ut alla potions spelaren har 
                 {
                     Console.WriteLine($"{i + 1})  {tempHolder[i].Name}: {tempHolder[i].Description}");
                 }
@@ -133,14 +119,14 @@ public class Player
                 Console.WriteLine();
                 Console.WriteLine("skriv nummret till vänster av föremålet du vill använda");
 
-                pick = TryP(tempHolder.Count + 1);
+                pick = TryP(tempHolder.Count + 1); // läser in vad spelaren vill gör
 
-                if (pick < tempHolder.Count)
+                if (pick < tempHolder.Count) // använder den potionen spelaren valde
                 {
                     tempHolder[pick].Use(this);
                 }
 
-                if (strengthPotion == null)
+                if (strengthPotion == null) // om spelaren valde en styrke dryck så stoppas den in i spelaren och räknar vilka värden spelaren ska få från den
                 {
                     if (potionDuration > 0)
                     {
@@ -148,12 +134,12 @@ public class Player
                     }
                 }
 
-                if (potionDuration <= 0)
+                if (potionDuration <= 0) // om styrke drycks effekten är noll eller minder blir variabeln strengthPotion tömd
                 {
                     strengthPotion = null;
                 }
 
-                for (int i = 0; i < tempHolder.Count; i++)
+                for (int i = 0; i < tempHolder.Count; i++) // läger tillbaka alla potions från temporära hållaren till ryggsäcken
                 {
                     if (tempHolder[i].UsesCurent > 0)
                     {
@@ -161,10 +147,10 @@ public class Player
                     }
                 }
 
-                tempHolder.Clear();
+                tempHolder.Clear(); // tömmer den temporära hållaren
                 pick = -10;
             }
-            else
+            else // om spelaren inte har någon potions så förklaras det till spelaren
             {
                 Console.WriteLine("Du har inga föremål");
                 Console.WriteLine("Tryck enter för att lämna denna skärm");
@@ -173,52 +159,53 @@ public class Player
             }
         };
 
-        inFight["backa"] = () =>
+        inFight["backa"] = () => // går tillbaka till vyn där man ser alla fiender och spelaren
         {
             pick = -1;
         };
 
-        inWorld["lager"] = () =>
+        inWorld["lager"] = () => // skriver ut alla föremål spelaren har på sig samt i ryggsäcken, spelaren kan också utrusta det den har i ryggsäcken
         {
             if (inventory.Items.Count >= 1)
             {
                 Console.WriteLine("Använder: ");
                 Console.WriteLine($"Vapen: {weapon.Name} (kan göra {weapon.MinDamage} - {weapon.MaxDamage} skada)");
-                if (armor == null)
+                if (armor == null) // om spelaren inte har någon armor på sig skriver den ut det till spelaren
                 {
                     Console.WriteLine("Armor: ingen utrustad");
                 }
-                else
+                else // om spelaren har armor på sig skriver den ut det till spelaren
                 {
-                    Console.WriteLine($"Armor: {armor.Name} (blockar {armor.Defens} fysisk skada och {armor.MageArmor} magisk skada)");
+                    Console.WriteLine($"Armor: {armor.Name} (blockar {armor.Defens} skada)");
                 }
-                if (spell != null)
+                if (spell != null) // om spelaren har en förmåga så skrever den ut det till spelaren
                 {
                     Console.WriteLine($"Förmåga: {spell.Name}");
                 }
                 Console.WriteLine();
 
                 Console.WriteLine("I din ryggsäck:");
-                inventory.Display();
+                inventory.Display(); // skrive ut allt i ryggsäcken
 
                 Console.WriteLine();
                 Console.WriteLine("skriv numret som står till vänster av föremålet du vill utrusta.");
-                pick = TryP(inventory.Items.Count + 1);
+                pick = TryP(inventory.Items.Count + 1); // spelaren väljer det den vill utrusta eller att backa ut
 
-                if (pick < inventory.Items.Count)
+                if (pick < inventory.Items.Count) // om spelaren valde att försöka utrusta något
                 {
-                    if (inventory.Items[pick].WeaponBool == true)
+                    if (inventory.Items[pick].WeaponBool == true) // om spelaren valde att utrusta ett vapen
                     {
                         inventory.EquipWeapon(pick);
 
                         if (pick <= inventory.Items.Count)
                         {
-                            inventory.Items.Add(weapon);
-                            weapon = inventory.EquippedWeapon.Dequeue();
+                            inventory.Items.Add(weapon); // stoppar vapnet splaren hade in i ryggsäcken
+                            weapon = inventory.EquippedWeapon.Dequeue(); // utrustar vapnet som var i ryggsäcken
+
                             Console.WriteLine($"Du utrustade {weapon.Name}. tryck enter för att lämna denna skärm");
                         }
                     }
-                    else if (inventory.Items[pick].ArmorBool == true)
+                    else if (inventory.Items[pick].ArmorBool == true) // om spelaren valde att utrusta armor
                     {
                         inventory.EquipArmor(pick);
 
@@ -226,23 +213,25 @@ public class Player
                         {
                             if (armor != null)
                             {
-                                inventory.Items.Add(armor);
+                                inventory.Items.Add(armor); // stoppar armorn splaren hade in i ryggsäcken
                             }
-                            armor = inventory.EquippedArmor.Dequeue();
+
+                            armor = inventory.EquippedArmor.Dequeue(); // utrustar armorn som var i ryggsäcken
+
                             Console.WriteLine($"Du utrustade {armor.Name}. tryck enter för att lämna denna skärm");
                         }
                     }
-                    else
+                    else // om spelaren valde en potion
                     {
                         Console.WriteLine($"Du kan inte använda den här. tryck enter för att lämna denna skärm");
                     }
                 }
-                else
+                else // om spelaren valda att inte utrusta något
                 {
                     Console.WriteLine("Du valde att fortsätta använda det du redan använde. tryck enter för att lämna denna skärm");
                 }
             }
-            else
+            else // om spelaren inte har något i ryggsäcken
             {
                 Console.WriteLine("du har inget i din ryggsäck. tryck enter för att lämna denna skärm");
             }
@@ -251,9 +240,9 @@ public class Player
             Console.Clear();
         };
 
-        inWorld["upgradera"] = () =>
+        inWorld["upgradera"] = () => // upgraderar spelarens förmåga
         {
-            if (spell != null && hasUsedWorldAction == false)
+            if (spell != null && hasUsedWorldAction == false) // om man inte har gjort sitt engångsval och har en förmåga så 
             {
                 float multiplier = Random.Shared.Next(1, 6);
                 multiplier = 1 + (multiplier / 10);
@@ -261,19 +250,19 @@ public class Player
 
                 hasUsedWorldAction = true;
             }
-            else if (hasUsedWorldAction == false && spell == null)
+            else if (hasUsedWorldAction == false && spell == null) // om man inte har fått en förmåga än
             {
                 Console.WriteLine("Du har ingen förmåga att upgradera");
             }
-            else
+            else // man har gjort sitt engångsval
             {
                 Console.WriteLine("Du har redan gjort ditt engångs val");
             }
         };
 
-        inWorld["vila"] = () =>
+        inWorld["vila"] = () => // ger spelaren hp och mana
         {
-            if (hasUsedWorldAction == false)
+            if (hasUsedWorldAction == false) // om spelaren inte har gjort sitt engångsval så får spelaren 20% av sitt max hp och mana tillbaka 
             {
                 Hp += Math.Round(maxHP * 0.2);
                 Mp += Math.Round(maxMP * 0.2);
@@ -281,13 +270,13 @@ public class Player
 
                 Console.WriteLine($"Du vilar och ditt HP är nu {hp} (+ {Math.Round(maxHP * 0.2)}) och MP är {mp} (+ {Math.Round(maxMP * 0.2)})");
             }
-            else
+            else // spelaren har gjort sitt engångsval
             {
                 Console.WriteLine("Du har redan gjort ditt engångs val");
             }
         };
 
-        inWorld["fortsätt"] = () =>
+        inWorld["fortsätt"] = () => // startar nästa strid
         {
             isInWorld = false;
             hasUsedWorldAction = false;
@@ -451,9 +440,9 @@ public class Player
         {
             xp = value;
 
-            if (xp >= 15 * level * 1.25f)
+            if (xp >= 15 * level)
             {
-                xp -= 15 * level * 1.25f;
+                xp -= 15 * level;
                 level++;
                 maxHP += 2;
                 maxMP++;
@@ -485,19 +474,19 @@ public class Player
         }
     }
 
-    public void LifeStealActiv()
+    public void LifeStealActiv() // kollar om spelaren har LifeSteal och ger hp baserat på skadan som gjordes
     {
         if (lifeStealDuration > 0)
         {
             LifeSteal life = (LifeSteal)spell;
-            hp = damage * life.HelaAmount;
+            hp += damage * life.HelaAmount;
+
+            Console.WriteLine($"och du fick {damage * life.HelaAmount}");
         }
     }
 
-    public void ActionsForFight(Weapon weapon, StrengthPotion strengthPotion, Enemy target, string actions)
+    public void ActionsForFight(Weapon weapon, StrengthPotion strengthPotion, Enemy target, string actions) // läser in vilken handling spelaren ville göra i striden och gör den
     {
-        this.target = target;
-
         if (actions == "attackera")
         {
             inFight["attackera"]();
@@ -522,11 +511,9 @@ public class Player
         {
             inFight["backa"]();
         }
-
-        this.target = null;
     }
 
-    public void ActionsForWorld(string actions)
+    public void ActionsForWorld(string actions) // läser in vilken handling spelaren ville göra i utanför striden och gör den
     {
         if (actions == "lager")
         {
@@ -546,7 +533,7 @@ public class Player
         }
     }
 
-    public void PrintFightActions()
+    public void PrintFightActions() // skriver ut alla handlingar spelaren kan göra under striden
     {
         foreach (string key in inFight.Keys)
         {
@@ -556,7 +543,7 @@ public class Player
         Console.WriteLine();
     }
 
-    public void PrintWorldActions()
+    public void PrintWorldActions() // skriver ut alla handlingar spelaren kan göra utanför striderna
     {
         foreach (string key in inWorld.Keys)
         {
@@ -566,7 +553,7 @@ public class Player
         Console.WriteLine();
     }
 
-    public void PickActionInFight(Player player)
+    public void PickActionInFight(Player player) // läser in vilken handling spelaren valde att göra under striden
     {
         Console.WriteLine("skriv vad du vill göra");
         actions = Console.ReadLine().ToLower();
@@ -579,7 +566,7 @@ public class Player
         }
     }
 
-    public void PickActionInWorld(Player player)
+    public void PickActionInWorld(Player player) // läser in vilken handling spelaren valde att göra utanför striden
     {
         Console.WriteLine("skriv vad du vill göra");
         actions = Console.ReadLine().ToLower();
@@ -592,17 +579,19 @@ public class Player
         }
     }
 
-    public void WorldOrder(Player player)
+    public void WorldOrder(Player player) // gör så att alla metoderna ovan som handlar om world är i en årdning och lätare att använda utanför player
     {
         isInWorld = true;
 
         while (isInWorld == true)
         {
-            if (tutorial)
+            if (tutorial) // om det är första gången spelaren är i world så får spelaren en förklaring av vad alla val gör
             {
                 Console.WriteLine("Du har kommit till en viloplats och du kan titta igenom ditt lager, upgradera din magi och vila för hp och mana.");
                 Console.WriteLine("Du kan dock när det kommer till uppgradera och vila så får du bara göra en av dem en gång pär vilo plats. ");
                 Console.WriteLine();
+
+                tutorial = false;
             }
 
             player.PrintWorldActions();
@@ -615,7 +604,7 @@ public class Player
         }
     }
 
-    public void FightOrder(Weapon playerWeapon, Player player, StrengthPotion strengthPotion, Enemy target)
+    public void FightOrder(Weapon playerWeapon, Player player, StrengthPotion strengthPotion, Enemy target) // gör så att alla metoderna ovan som handlar om Fight är i en årdning och lätare att använda utanför player
     {
         player.PrintFightActions();
 
@@ -629,11 +618,11 @@ public class Player
         player.LifeStealDuration--;
     }
 
-    public int TryP(int countInItems) // TryP = TryParse
+    public int TryP(int countInItems) // läser in vad spelaren väljer när det kommer till numer val
     {
         int pick = -10;
 
-        while (pick < 1 || pick > countInItems)
+        while (pick < 1 || pick > countInItems) // så länge spelaren inte skrev ett giltigt numer
         {
             string pickText = Console.ReadLine();
             int.TryParse(pickText, out pick);
@@ -649,13 +638,13 @@ public class Player
         return pick - 1;
     }
 
-    public void NewItem()
+    public void NewItem() // skapar 3 till 5 nya slumpade föremål där spelaren kan välja en av dem som uppoffras
     {
         int amount = Random.Shared.Next(3, 6);
 
         List<Item> tempHolder = [];
 
-        for (int i = 0; i < amount; i++)
+        for (int i = 0; i < amount; i++) //gör och slumpar den mängden föremål som slumpades innan
         {
             int random = Random.Shared.Next(1, 6);
 
@@ -670,31 +659,25 @@ public class Player
 
             tempHolder.Add(newItem);
             Console.WriteLine($"{i + 1}: {tempHolder[i].Name} {tempHolder[i].Description}");
+        }
 
-            if (i == amount - 1)
-            {
-                Console.WriteLine();
-                Console.WriteLine("skriv numret till vänster om det föremål du vill ta");
+        Console.WriteLine();
+        Console.WriteLine("skriv numret till vänster om det föremål du vill ta");
 
-                pick = TryP(tempHolder.Count);
-                Inventory.Items.Add(tempHolder[pick]);
+        pick = TryP(tempHolder.Count);
+        Inventory.Items.Add(tempHolder[pick]);
 
-                for (int a = 0; a < tempHolder.Count; a++)
-                {
-                    tempHolder.Remove(tempHolder[a]);
-                }
-
-                i++;
-            }
+        for (int a = 0; a < tempHolder.Count; a++)
+        {
+            tempHolder.Remove(tempHolder[a]);
         }
     }
 
-    public void PickAbility()
+    public void PickAbility() // skapar dem 3 spellsen som finns och spelaren får välja en av dem 3 som uppoffras
     {
         List<Abilitie> tempHolder = [];
-        int amount = 3;
 
-        for (int i = 0; i < amount; i++)
+        for (int i = 0; i < 3; i++)
         {
             Abilitie newAbility = i switch
             {
@@ -707,22 +690,17 @@ public class Player
 
             Console.WriteLine($"{i + 1}: {tempHolder[i].Description}");
             Console.WriteLine();
+        }
 
-            if (i == amount - 1)
-            {
-                Console.WriteLine();
-                Console.WriteLine("skriv numret till vänster av förmågan du vill ha");
+        Console.WriteLine();
+        Console.WriteLine("skriv numret till vänster av förmågan du vill ha");
 
-                pick = TryP(tempHolder.Count);
-                spell = tempHolder[pick];
+        pick = TryP(tempHolder.Count);
+        spell = tempHolder[pick];
 
-                for (int a = 0; a < tempHolder.Count; a++)
-                {
-                    tempHolder.Remove(tempHolder[a]);
-                }
-
-                i++;
-            }
+        for (int a = 0; a < tempHolder.Count; a++)
+        {
+            tempHolder.Remove(tempHolder[a]);
         }
     }
 

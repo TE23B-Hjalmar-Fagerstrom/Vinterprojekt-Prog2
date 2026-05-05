@@ -15,8 +15,13 @@ Console.WriteLine("tryck enter för att fortsätta");
 Console.ReadLine();
 Console.Clear();
 
-while (player.Hp > 0) // så länge spelaren lever
+while (player.Hp > 0) // så länge spelaren lever så fortsätter spelet
 {
+        player.NewItem();
+        player.NewItem();
+        player.NewItem();
+        player.NewItem();
+        player.NewItem();
     Fight();
     rooms++;
 
@@ -37,13 +42,13 @@ Console.WriteLine($"På vägen genom slotet mötte du samma öde som alla före 
 
 Console.ReadLine();
 
-void spawnEnemy(Player player)
+void spawnEnemy(Player player) // skapar en slumpad mängd fiender till striderna
 {
-    if (bossFightCountDown > 0)
+    if (bossFightCountDown > 0) // om en boss inte ska skapas så görs vanliga fiender
     {
-        for (int i = 0; i < Random.Shared.Next(1, 4); i++)
+        for (int i = 0; i < Random.Shared.Next(1, 3 + (player.Level / 5)); i++) // gör 1 till 3 fiender och kan bli flera desto högre level spelaren är
         {
-            if (Random.Shared.Next(1, 11) < 10)
+            if (Random.Shared.Next(1, 11) < 10) // slumpar om det ska vara en vanlig fiende eller tank
             {
                 enemiesAlive.Add(new Enemy(player));
             }
@@ -55,48 +60,48 @@ void spawnEnemy(Player player)
 
         bossFightCountDown--;
     }
-    else
+    else // skapar en boss efter ett visst antal strider
     {
         enemiesAlive.Add(new Boss(player));
         bossFightCountDown = 10;
     }
 }
 
-void Fight()
+void Fight() // årdningen av hur striderna ska gå till
 {
     player.Pick = -1;
-    spawnEnemy(player);
+    spawnEnemy(player); // skapar fienderna för striden
 
-    while (player.Hp > 0 && enemiesAlive.Count > 0)
+    while (player.Hp > 0 && enemiesAlive.Count > 0) // så länge spelaren lever och fiende listan inte är tom
     {
-        while (enemy.EnemyTurn == false && player.Hp > 0 && enemiesAlive.Count > 0)
+        while (enemy.EnemyTurn == false && player.Hp > 0 && enemiesAlive.Count > 0) // så länge det är spelarens omgång 
         {
-            if (player.Pick < 0)
+            if (player.Pick < 0) // så länge spelaren inte har valt något
             {
-                for (int i = 0; i < enemiesAlive.Count; i++)
+                for (int i = 0; i < enemiesAlive.Count; i++) // skriver ut vad alla fienderna tänker att göra
                 {
                     Console.WriteLine($"{i + 1}: {enemiesAlive[i].EnemyName} HP {enemiesAlive[i].Hp}");
                     enemiesAlive[i].BattleLogic(player, enemiesAlive[Random.Shared.Next(0, enemiesAlive.Count)]);
                     Console.WriteLine("");
                 }
-                if (enemiesAlive.Count > 0)
+                if (enemiesAlive.Count > 0) // skriver ut information om och till spelaren om det fortfarande finns fiender
                 {
-                    Console.WriteLine($"du har {player.Hp} hp");
+                    Console.WriteLine($"du har {player.Hp} hp och {player.Mp} mana");
                     Console.WriteLine("");
                     Console.WriteLine("skriv nummret till vänster av fienden du vill attackera");
 
-                    player.Pick = player.TryP(enemiesAlive.Count);
+                    player.Pick = player.TryP(enemiesAlive.Count); // läser in spelarens val
                 }
             }
 
-            if (enemiesAlive.Count > 0)
+            if (enemiesAlive.Count > 0) // gör det spelaren valde och kollar om fienderna överlevde eller inte
             {
                 player.FightOrder(player.PlayerWeapon, player, player.StrengthPotion, enemiesAlive[player.Pick]);
                 Console.WriteLine();
 
-                for (int i = 0; i < enemiesAlive.Count; i++)
+                for (int i = 0; i < enemiesAlive.Count; i++) // kollar om alla fiender lever
                 {
-                    if (enemiesAlive[i].Hp <= 0)
+                    if (enemiesAlive[i].Hp <= 0) // om fienden inte lever så tar den ur den och stoppar in det i död listan
                     {
                         Console.WriteLine($"{enemiesAlive[i].EnemyName} dräptes");
                         Console.WriteLine();
@@ -108,7 +113,7 @@ void Fight()
             }
         }
 
-        for (int i = 0; i < enemiesAlive.Count; i++)
+        for (int i = 0; i < enemiesAlive.Count; i++) // gör alla fiendernas avsikter
         {
             enemiesAlive[i].BattleLogic(player, enemiesAlive[Random.Shared.Next(0, enemiesAlive.Count)]);
         }
@@ -122,7 +127,7 @@ void Fight()
         enemy.EnemyTurn = false;
     }
 
-    for (int i = 0; i < enemiesDead.Count; i++)
+    for (int i = 0; i < enemiesDead.Count; i++) // när striden är slut så går den igenom död listan och ger xp och guldet spelaren ska få
     {
         Console.WriteLine($"du fick {enemiesDead[i].XpDrop} xp och {enemiesDead[i].GoldDrop} guld från {enemiesDead[i].EnemyName}");
 
@@ -132,7 +137,7 @@ void Fight()
         Console.WriteLine();
     }
 
-    enemiesDead.Clear();
+    enemiesDead.Clear(); // tömmer död listan
 
     Console.WriteLine("Tryck enter för att välja din belöning");
     Console.ReadLine();

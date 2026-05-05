@@ -6,7 +6,7 @@ public class BackPack
 
     private Weapon weapon;
 
-    public BackPack()
+    public BackPack() // skapar och ger spelaren sitt start vapen
     {
         weapon = new();
 
@@ -37,7 +37,7 @@ public class BackPack
     {
         int itemCount = 1;
 
-        for (int i = 0; i < items.Count; i++) // skriver ut items information den mängden items
+        for (int i = 0; i < items.Count; i++) // skriver ut informationen för alla items som spelaren har
         {
             Console.WriteLine($"({itemCount}) {Items[i].Name}: {items[i].Description}");
             itemCount++;
@@ -46,7 +46,7 @@ public class BackPack
         Console.WriteLine($"{items.Count + 1} Lämna");
     }
 
-    public void EquipWeapon(int pick) // metoden gör så spelaren kan utrusta vappen
+    public void EquipWeapon(int pick) // metoden gör så spelaren kan utrusta vapen
     {
         if (items[pick].WeaponBool == true) // om det spelaren valde var ett vappen så utrustas den och tas ur ryggsäcken
         {

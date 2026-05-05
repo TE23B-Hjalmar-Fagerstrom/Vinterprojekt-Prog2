@@ -5,9 +5,8 @@ public class Item : Rarity
     protected bool weaponBool = false;
     protected bool consumableBool = false;
     protected bool armorBool = false;
-    protected bool salable = true;
 
-    public Item()
+    public Item() // stoppar in items rarity i deras namn
     {
         name = $"{theRarity} ";
 

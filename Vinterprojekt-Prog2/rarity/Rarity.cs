@@ -32,7 +32,7 @@ public class Rarity
         }
     }
 
-    public Rarity() // konstruktor 
+    public Rarity() // slumpar vilken sällsynthet föremål kommer att ha och ger det en bonus om det är mer sällsynt samt att namnet innehåller sällsyntheten
     {
         rarityLevel = Random.Shared.Next(randomMin, randomMax);
 

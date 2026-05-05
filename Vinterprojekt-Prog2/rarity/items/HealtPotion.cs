@@ -14,7 +14,7 @@ public class HealtPotion : Consumable
         TheDescription(); // läser in föremålets beskrivning
     }
 
-    public override void Use(Player target) // använder 
+    public override void Use(Player target) // gör så att spelaren får hp och minskar hur många gånger man kan göra det
     {
         if (UsesCurent > 0) // så länge föremålet forfarande har användningar
         {
