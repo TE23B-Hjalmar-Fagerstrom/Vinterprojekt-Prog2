@@ -487,6 +487,8 @@ public class Player
 
     public void ActionsForFight(Weapon weapon, StrengthPotion strengthPotion, Enemy target, string actions) // läser in vilken handling spelaren ville göra i striden och gör den
     {
+        this.target = target;
+
         if (actions == "attackera")
         {
             inFight["attackera"]();
@@ -511,6 +513,8 @@ public class Player
         {
             inFight["backa"]();
         }
+        
+        this.target = null;
     }
 
     public void ActionsForWorld(string actions) // läser in vilken handling spelaren ville göra i utanför striden och gör den

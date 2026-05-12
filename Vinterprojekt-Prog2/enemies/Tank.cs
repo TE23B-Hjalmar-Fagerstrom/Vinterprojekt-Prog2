@@ -5,13 +5,11 @@ public class Tank : Enemy
         randomMax = 125;
         armorMultiplier = 1.75;
         difficultyMultiplier = 1.25;
-        Armor *= armorMultiplier;
-        XpDrop *= difficultyMultiplier;
-        GoldDrop *= difficultyMultiplier;
-
-        Armor = Math.Round(Armor);
-        XpDrop = Math.Round(XpDrop);
-        GoldDrop = Math.Round(GoldDrop);
+        
+        MaxHp = Math.Round(MaxHp * difficultyMultiplier);
+        Armor = Math.Round(Armor * armorMultiplier);
+        XpDrop = Math.Round(XpDrop * difficultyMultiplier);
+        GoldDrop = Math.Round(GoldDrop * difficultyMultiplier);
 
         EnemyName = "Spök riddare: ";
     }

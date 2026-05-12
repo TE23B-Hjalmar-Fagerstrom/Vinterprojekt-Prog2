@@ -7,7 +7,7 @@ public class ManaPotion : Consumable
         manaAmount = (5 + RarityMultiplier) * RarityMultiplier;
         manaAmount = Math.Round(manaAmount);
 
-        Name = "Mana Dryck";
+        Name = "Mana Brygd";
 
         consumableValue = manaAmount;
         effect = $"Mana: användningar kvar({UsesCurent})";
