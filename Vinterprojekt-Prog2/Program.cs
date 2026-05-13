@@ -17,11 +17,6 @@ Console.Clear();
 
 while (player.Hp > 0) // så länge spelaren lever så fortsätter spelet
 {
-        player.NewItem();
-        player.NewItem();
-        player.NewItem();
-        player.NewItem();
-        player.NewItem();
     Fight();
     rooms++;
 
