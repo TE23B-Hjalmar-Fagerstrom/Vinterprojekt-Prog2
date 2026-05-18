@@ -29,6 +29,7 @@ public class Player
     {
         hp = maxHP;
         mp = maxMP;
+        isInFight = true;
         weapon = inventory.EquippedWeapon.Dequeue();
 
         inFight["attackera"] = () => // gör så att spelaren attackerar sin valda fiende
@@ -592,7 +593,7 @@ public class Player
             if (tutorial) // om det är första gången spelaren är i world så får spelaren en förklaring av vad alla val gör
             {
                 Console.WriteLine("Du har kommit till en viloplats och du kan titta igenom ditt lager, upgradera din magi och vila för hp och mana.");
-                Console.WriteLine("Du kan dock när det kommer till uppgradera och vila så får du bara göra en av dem en gång pär vilo plats. ");
+                Console.WriteLine("När det kommer till uppgradera och vila så får du bara göra en av dem en gång pär vilo plats. ");
                 Console.WriteLine();
 
                 tutorial = false;

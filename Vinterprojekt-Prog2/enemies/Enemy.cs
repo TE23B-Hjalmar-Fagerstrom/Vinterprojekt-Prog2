@@ -226,13 +226,27 @@ public class Enemy
         }
         else if (player.PlayerDefending == true && player.Armor != null) // hur skada räknas om spelaren försvarar och har armor
         {
-            player.Hp -= Math.Round((Damage - player.Armor.Defens) * player.Block);
-            Console.WriteLine($"{enemyName} gjorde {Math.Round((Damage - player.Armor.Defens) * player.Block)} skada på dig");
+            if ((Damage - player.Armor.Defens) * player.Block > 0) // kollar så att skadan är över 0 så att spelaren inte får hp om det är lägre
+            {
+                player.Hp -= Math.Round((Damage - player.Armor.Defens) * player.Block);
+                Console.WriteLine($"{enemyName} gjorde {Math.Round((Damage - player.Armor.Defens) * player.Block)} skada på dig");
+            }
+            else
+            {
+                Console.WriteLine($"{enemyName} gjorde 0 skada på dig");
+            }
         }
         else if (player.PlayerDefending == false && player.Armor != null) // hur skada räknas om spelaren inte försvarar och har armor
         {
-            player.Hp -= Math.Round(Damage - player.Armor.Defens);
-            Console.WriteLine($"{enemyName} gjorde {Math.Round(Damage - player.Armor.Defens)} skada på dig");
+            if (Damage - player.Armor.Defens > 0)
+            {
+                player.Hp -= Math.Round(Damage - player.Armor.Defens);
+                Console.WriteLine($"{enemyName} gjorde {Math.Round(Damage - player.Armor.Defens)} skada på dig");
+            }
+            else
+            {
+                Console.WriteLine($"{enemyName} gjorde 0 skada på dig");
+            }
         }
         else // hur skada räknas om spelaren försvarar och inte har armor
         {

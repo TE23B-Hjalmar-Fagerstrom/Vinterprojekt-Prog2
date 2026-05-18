@@ -17,8 +17,11 @@ Console.Clear();
 
 while (player.Hp > 0) // så länge spelaren lever så fortsätter spelet
 {
-    Fight();
-    rooms++;
+    if (player.IsInFight == true)
+    {
+        Fight();
+        rooms++;
+    }
 
     if (player.Hp > 0) // om spelaren lever så får den belöningar 
     {
@@ -76,6 +79,8 @@ void Fight() // årdningen av hur striderna ska gå till
                 for (int i = 0; i < enemiesAlive.Count; i++) // skriver ut vad alla fienderna tänker att göra
                 {
                     Console.WriteLine($"{i + 1}: {enemiesAlive[i].EnemyName} HP {enemiesAlive[i].Hp}");
+
+                    // Här kommer battle logic bara bestämma och skriva ut vad fienden tänker göra
                     enemiesAlive[i].BattleLogic(player, enemiesAlive[Random.Shared.Next(0, enemiesAlive.Count)]);
                     Console.WriteLine("");
                 }
